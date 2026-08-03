@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(gh --version)",
+      "PowerShell(node --version)",
+      "PowerShell(Get-ChildItem -Path C:\\\\Users\\\\amich -Directory -Recurse -Depth 4 -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'boutique|ouf' } | Select-Object -First 20 FullName)",
+      "PowerShell(winget install --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements --silent --disable-interactivity)",
+      "PowerShell(& 'C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe' -U jmp -d postgres -w -c \"select current_user, version\\(\\)\" 2>&1)",
+      "PowerShell([System.Globalization.CultureInfo]::CurrentCulture = 'fr-FR'; \\(Get-Date\\).ToString\\('dddd HH:mm', [System.Globalization.CultureInfo]::GetCultureInfo\\('fr-FR'\\)\\))",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; New-Item -ItemType Directory -Force -Path \"$r\\\\Back\",\"$r\\\\Front\",\"$r\\\\Additional Data\" | Out-Null; dotnet new classlib -n Reversi.Core -o \"$r\\\\Back\\\\Reversi.Core\" --framework net10.0 --nologo)",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; dotnet new classlib -n Reversi.Core -o \"$r\\\\Back\\\\Reversi.Core\" --framework net10.0; dotnet new classlib -n Reversi.Data -o \"$r\\\\Back\\\\Reversi.Data\" --framework net10.0)",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; dotnet new webapi -n Reversi.Api -o \"$r\\\\Back\\\\Reversi.Api\" --framework net10.0 --use-controllers false)",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; dotnet new nunit -n Reversi.Tests -o \"$r\\\\Back\\\\Reversi.Tests\" --framework net10.0)",
+      "PowerShell(dotnet new sln -n Reversi -o $r --format slnx)",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi')",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; dotnet sln \"$r\\\\Reversi.slnx\" add \"$r\\\\Back\\\\Reversi.Core\\\\Reversi.Core.csproj\" \"$r\\\\Back\\\\Reversi.Data\\\\Reversi.Data.csproj\" \"$r\\\\Back\\\\Reversi.Api\\\\Reversi.Api.csproj\" \"$r\\\\Back\\\\Reversi.Tests\\\\Reversi.Tests.csproj\")",
+      "PowerShell(dotnet build 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Reversi.slnx' -v q --nologo)",
+      "WebFetch(domain:github.com)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi'; npm create vite@latest Front -- --template react-ts --yes 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm install 2>&1 | Select-Object -Last 5; npm install -D vite-plugin-pwa 2>&1 | Select-Object -Last 5)",
+      "PowerShell($r='C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; Get-ChildItem $r -Recurse -File | Where-Object { $_.FullName -notmatch 'node_modules' } | ForEach-Object { $_.FullName.Replace\\($r,''\\) })",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm run build 2>&1 | Select-Object -Last 20)",
+      "PowerShell(dotnet test 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Back\\\\Reversi.Tests' --nologo -v q 2>&1)",
+      "PowerShell(netstat -aon)",
+      "PowerShell(Get-Service postgresql-x64-18)",
+      "PowerShell($env:PGPASSWORD='jmp'; & 'C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe' -U jmp -d postgres -w -c \"select current_user, version\\(\\);\" 2>&1 | Select-Object -First 5)",
+      "PowerShell(dotnet package search Npgsql.EntityFrameworkCore.PostgreSQL --exact-match --format json 2>&1)",
+      "PowerShell(dotnet build 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Reversi.slnx' -v q --nologo 2>&1)",
+      "PowerShell($env:PGPASSWORD='jmp'; & 'C:\\\\Program Files\\\\PostgreSQL\\\\18\\\\bin\\\\psql.exe' -U jmp -d postgres -w -c \"SELECT datname FROM pg_database WHERE datname LIKE 'Reversi%';\")",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npx oxlint 2>&1 | Select-Object -Last 15)",
+      "PowerShell(dotnet test 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Back\\\\Reversi.Tests' --nologo -v q --filter \"FullyQualifiedName~AiTests\" 2>&1)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm run build 2>&1 | Select-Object -Last 18; npx oxlint 2>&1 | Select-Object -Last 8)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm run build 2>&1 | Select-Object -Last 18)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npx oxlint 2>&1 | Select-Object -Last 10)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm run build 2>&1 | Select-Object -Last 12; npx oxlint 2>&1 | Select-Object -Last 6)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); Set-Location 'C:\\\\Users\\\\amich\\\\Dev\\\\Test\\\\Reversi\\\\Front'; npm run build 2>&1 | Select-Object -Last 14; npx oxlint 2>&1 | Select-Object -Last 8)"
+    ]
+  }
+}

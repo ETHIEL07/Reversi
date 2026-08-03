@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Back/">
+    <Project Path="Back/Reversi.Api/Reversi.Api.csproj" />
+    <Project Path="Back/Reversi.Core/Reversi.Core.csproj" />
+    <Project Path="Back/Reversi.Data/Reversi.Data.csproj" />
+    <Project Path="Back/Reversi.Tests/Reversi.Tests.csproj" />
+  </Folder>
+</Solution>

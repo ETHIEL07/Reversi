@@ -1,0 +1,188 @@
+.board-frame {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Square in every situation. The ceiling comes from the layout class, never from vh/vw,
+   so the board is correct inside the preview frame too. */
+.board {
+  width: min(100%, var(--board-max));
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 2px;
+  padding: 2px;
+  background: var(--board-line);
+  border: 3px solid var(--board-line);
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+}
+
+.board-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+  background: var(--board-felt);
+  cursor: default;
+  /* Perspective is what turns a flat rotation into a piece you see turning over. */
+  perspective: 380px;
+}
+
+.board-cell--playable {
+  cursor: pointer;
+}
+
+.board-cell--playable:hover .board-hint,
+.board-cell--playable:focus-visible .board-hint {
+  transform: scale(1.5);
+  opacity: 0.9;
+}
+
+.board-cell:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* Legal moves are shown by a discreet dot, never by highlighting the whole square. */
+.board-hint {
+  width: 20%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--hint);
+  opacity: 0.55;
+  transition:
+    transform 160ms ease-out,
+    opacity 160ms ease-out;
+}
+
+.disc-slot {
+  position: relative;
+  width: 82%;
+  aspect-ratio: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  animation: disc-drop 200ms ease-out;
+}
+
+/* The drop animation lives on the slot so it never fights the flip rotation below. */
+.disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  /* Slow enough to watch the piece stand on its rim and show its other face.
+     The overshoot at the end gives it weight. */
+  transition: transform 1150ms cubic-bezier(0.36, 1.24, 0.42, 1);
+}
+
+.disc--white {
+  transform: rotateY(180deg);
+}
+
+.disc__face {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  box-shadow: inset 0 -2px 4px rgb(0 0 0 / 35%);
+}
+
+.disc__face--black {
+  background: radial-gradient(circle at 32% 28%, #4a4a4a, #111 68%);
+  transform: translateZ(3px);
+}
+
+.disc__face--white {
+  transform: rotateY(180deg) translateZ(3px);
+  background: radial-gradient(circle at 32% 28%, #ffffff, #cdd3ce 72%);
+}
+
+/* Side of the piece: only visible while it is edge-on, which is exactly when the eye
+   needs something to hold on to. */
+.disc__edge {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  width: 6px;
+  height: 96%;
+  margin-left: -3px;
+  border-radius: 3px;
+  transform: rotateY(90deg);
+  background: linear-gradient(to right, #2a2a2a, #b9c0ba 45%, #7d857f 55%, #1c1c1c);
+}
+
+/* A stable disc can never be flipped again: it wears a quiet ring. */
+.disc-slot--stable::after {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  border: 2px solid var(--stable);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* A threatened disc is the one the side to move can flip right now. */
+.disc-slot--at-risk::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  border: 2px dashed var(--at-risk);
+  opacity: 0.8;
+  pointer-events: none;
+  animation: at-risk-pulse 1.6s ease-in-out infinite;
+}
+
+.disc__crown {
+  position: absolute;
+  top: -18%;
+  width: 46%;
+  height: auto;
+  fill: var(--crown);
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 55%));
+  pointer-events: none;
+}
+
+@keyframes disc-drop {
+  from {
+    transform: scale(0.4);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes at-risk-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc,
+  .disc-slot,
+  .board-hint {
+    transition: none;
+    animation: none;
+  }
+
+  .disc-slot--at-risk::before {
+    animation: none;
+  }
+}

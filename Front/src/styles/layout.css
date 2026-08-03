@@ -1,0 +1,166 @@
+/*
+ * All responsive rules hang off .layout--phone / --tablet / --fhd, never off @media alone:
+ * inside the preview frame the media queries see the window, not the frame.
+ */
+
+.layout {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  overflow: auto;
+
+  /* Ceiling for the board and everything aligned on it. */
+  --board-max: 560px;
+  --gutter: 16px;
+}
+
+.layout--phone {
+  --board-max: 420px;
+  --gutter: 12px;
+}
+
+.layout--tablet {
+  --board-max: 620px;
+  --gutter: 20px;
+}
+
+.layout--fhd {
+  --board-max: 560px;
+  --gutter: 24px;
+}
+
+.layout > .screen {
+  padding: var(--gutter);
+}
+
+.game-layout {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  grid-template-areas:
+    'top'
+    'board'
+    'actions';
+  justify-items: center;
+}
+
+.game-layout__top {
+  grid-area: top;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: var(--board-max);
+}
+
+.game-layout__board {
+  grid-area: board;
+  width: 100%;
+}
+
+.game-layout__actions {
+  grid-area: actions;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: var(--board-max);
+}
+
+/* Landscape tablet and FHD keep a permanent side panel next to the board. */
+.layout--fhd .game-layout,
+.layout--tablet.layout--landscape .game-layout {
+  grid-template-columns: auto minmax(230px, 300px);
+  grid-template-areas:
+    'board top'
+    'board actions';
+  align-content: start;
+  align-items: start;
+  justify-items: stretch;
+  gap: 20px;
+}
+
+.layout--fhd .game-layout__top,
+.layout--tablet.layout--landscape .game-layout__top,
+.layout--fhd .game-layout__actions,
+.layout--tablet.layout--landscape .game-layout__actions {
+  max-width: none;
+}
+
+.layout--fhd .avatar-row,
+.layout--tablet.layout--landscape .avatar-row {
+  gap: 8px;
+}
+
+/* Preview frame */
+.preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(255 255 255 / 2%),
+    rgb(255 255 255 / 2%) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.preview__device {
+  flex: none;
+  display: flex;
+  transform-origin: top center;
+  overflow: hidden;
+  background: var(--bg);
+  border: 2px solid var(--line-strong);
+  border-radius: 22px;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 45%);
+}
+
+.preview__device > .layout {
+  overflow: auto;
+}
+
+.preview__caption {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.viewport-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.viewport-switch__item {
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.viewport-switch__item--on {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.viewport-switch__item:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}

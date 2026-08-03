@@ -1,0 +1,25 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# Node / front
+node_modules/
+dist/
+dist-ssr/
+dev-dist/
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets
+.env
+.env.local
