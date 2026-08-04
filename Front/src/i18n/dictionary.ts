@@ -8,11 +8,8 @@ export type Language = 'fr' | 'en'
 const fr = {
   app: {
     title: 'Reversi',
-    build: 'Version',
-    buildUnavailable: 'API indisponible',
     back: 'Retour',
     close: 'Fermer',
-    preview: { auto: 'Auto', phone: 'Téléphone', tablet: 'Tablette', fhd: 'FHD' },
   },
   home: {
     lead: 'Tout peut basculer au dernier coup',
@@ -222,11 +219,8 @@ const fr = {
 const en: typeof fr = {
   app: {
     title: 'Reversi',
-    build: 'Build',
-    buildUnavailable: 'API unavailable',
     back: 'Back',
     close: 'Close',
-    preview: { auto: 'Auto', phone: 'Phone', tablet: 'Tablet', fhd: 'FHD' },
   },
   home: {
     lead: 'It can all turn on the last move',
