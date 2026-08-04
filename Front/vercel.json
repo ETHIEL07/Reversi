@@ -1,10 +1,13 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "env": {
+    "VITE_API_URL": "https://starter-adelaide-fare-petition.trycloudflare.com"
+  },
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://$REVERSI_API_URL/api/:path*"
+      "destination": "https://starter-adelaide-fare-petition.trycloudflare.com/api/:path*"
     }
   ]
 }
