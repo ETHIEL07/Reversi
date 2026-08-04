@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Sqlite;
 using Reversi;
 using Reversi.Api.Contracts;
 using Reversi.Api.Endpoints;
@@ -24,9 +25,19 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var connectionString = builder.Configuration.GetConnectionString("Reversi")
-    ?? throw new InvalidOperationException("Connection string 'Reversi' is missing from configuration.");
+    ?? "Data Source=reversi.db";
 
-builder.Services.AddDbContext<ReversiDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ReversiDbContext>(options =>
+{
+    if (connectionString.StartsWith("Data Source="))
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseNpgsql(connectionString);
+    }
+});
 builder.Services.AddScoped<GameService>();
 
 const string FrontCorsPolicy = "front";
