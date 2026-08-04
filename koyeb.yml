@@ -1,0 +1,17 @@
+services:
+  - name: reversi-api
+    docker:
+      image: ./Back
+    env:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: ConnectionStrings__Reversi
+        value: ${DATABASE_URL}
+    ports:
+      - port: 8080
+        protocol: http
+    routes:
+      - path: /
+        port: 8080
