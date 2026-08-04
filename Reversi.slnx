@@ -5,4 +5,7 @@
     <Project Path="Back/Reversi.Data/Reversi.Data.csproj" />
     <Project Path="Back/Reversi.Tests/Reversi.Tests.csproj" />
   </Folder>
+  <Folder Name="/Seed/">
+    <Project Path="Seed/Reversi.Seed/Reversi.Seed.csproj" />
+  </Folder>
 </Solution>

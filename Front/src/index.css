@@ -1,24 +1,29 @@
 :root {
-  --bg: #12231b;
-  --surface: #1a3227;
-  --surface-hover: #224033;
+  --bg: #0c1a13;
+  --surface: #172c22;
+  --surface-lift: #21402f;
+  --surface-deep: #12241b;
+  --surface-hover: #244634;
   --line: #2b4a3a;
-  --line-strong: #3d6650;
-  --text: #eef5f0;
-  --text-muted: #9ab5a5;
+  --line-strong: #0d2018;
+  --text: #f1f7f3;
+  --text-muted: #9db8a8;
+  --text-faint: #6e8b7b;
   --danger: #e2795f;
-  --accent: #6fd39b;
-  --accent-hover: #85e0ac;
+
+  --accent: #58c98c;
+  --accent-lift: #7ee2ab;
+  --accent-deep: #1f7a4c;
   --focus: #9ad9b8;
 
   --board-felt: #1e7a4f;
-  --board-line: #0f4a2f;
-  --hint: #eef5f0;
+  --board-line: #0b3a24;
+  --hint: #f3fff7;
   --stable: #9ad9b8;
-  --at-risk: #e2b95f;
+  --at-risk: #f0c04f;
   --crown: #f2c94c;
 
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI Variable', 'Segoe UI', Roboto, sans-serif;
   color-scheme: dark;
 }
 
@@ -32,6 +37,7 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
 }
 
 #root {

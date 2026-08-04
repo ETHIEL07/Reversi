@@ -1,27 +1,35 @@
+import { useT } from '../i18n/useT'
+import type { Dictionary } from '../i18n/dictionary'
 import type { GameState } from '../types/game'
 
 type ScoreBarProps = {
   game: GameState
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  BlackWins: 'Les noirs gagnent',
-  WhiteWins: 'Les blancs gagnent',
-  Draw: 'Partie nulle',
-}
-
-function turnLabel(game: GameState): string {
+function turnLabel(game: GameState, t: Dictionary): string {
   if (game.isOver) {
-    return STATUS_LABELS[game.status] ?? 'Partie terminée'
+    if (game.status === 'BlackWins') {
+      return t.game.blackWins
+    }
+
+    if (game.status === 'WhiteWins') {
+      return t.game.whiteWins
+    }
+
+    return game.status === 'Draw' ? t.game.draw : t.game.over
   }
 
-  const side = game.currentPlayer === 'Black' ? 'aux noirs' : 'aux blancs'
+  if (game.mustPass) {
+    return t.game.mustPass
+  }
 
-  return game.mustPass ? `Aucun coup possible, tour à passer` : `Au tour ${side}`
+  return game.currentPlayer === 'Black' ? t.game.turnBlack : t.game.turnWhite
 }
 
 /** Score and side to move, always above the board. */
 export function ScoreBar({ game }: ScoreBarProps) {
+  const t = useT()
+
   return (
     <div className="score-bar" data-testid="game-view-score">
       <div
@@ -35,7 +43,7 @@ export function ScoreBar({ game }: ScoreBarProps) {
       </div>
 
       <p className="score-bar__turn" data-testid="game-text-turn">
-        {turnLabel(game)}
+        {turnLabel(game, t)}
       </p>
 
       <div

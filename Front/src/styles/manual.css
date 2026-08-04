@@ -229,6 +229,7 @@
   animation: modal-enter 220ms cubic-bezier(0.3, 1.3, 0.5, 1);
 }
 
+/* Header stays at the top and never shrinks. */
 .modal__header {
   display: flex;
   align-items: center;
@@ -236,6 +237,7 @@
   gap: 12px;
   padding: 12px 14px;
   border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
 }
 
 .modal__title {
@@ -244,9 +246,13 @@
   font-weight: 600;
 }
 
+/* The body grows to fill available space but never exceeds the panel height. */
 .modal__body {
+  flex: 1;
+  min-height: 0;
   padding: 14px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modal__lead {
@@ -258,6 +264,214 @@
 
 .menu--wide {
   max-width: none;
+}
+
+.modal__backdrop--static {
+  cursor: default;
+}
+
+/* ---------- Guided tour ---------- */
+
+/* Fixed height: the window never resizes between steps, the content fits the window. */
+.tutorial {
+  max-width: 460px;
+  height: min(560px, 86dvh);
+}
+
+.tutorial__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.tutorial__sample {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.tutorial__title {
+  margin: 0;
+}
+
+.tutorial__text {
+  margin: 0;
+  max-width: 38ch;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.tutorial__text strong {
+  color: var(--text);
+}
+
+.tutorial__dots {
+  display: inline-flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tutorial__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 22%);
+  transition: background-color 160ms ease-out;
+}
+
+.tutorial__dot--on {
+  background: var(--accent);
+  box-shadow: 0 0 8px rgb(88 201 140 / 70%);
+}
+
+/* Footer stays at the bottom and never shrinks. */
+.tutorial__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.tutorial__nav {
+  display: flex;
+  gap: 10px;
+}
+
+.tutorial__nav .btn {
+  flex: 1;
+}
+
+.legend__cell--wide {
+  width: 78px;
+  gap: 6px;
+}
+
+.legend__cell--plain {
+  background: rgb(255 255 255 / 6%);
+  border-color: var(--line);
+  font-size: 30px;
+}
+
+.legend__cell--wide .legend__disc {
+  width: 40%;
+}
+
+/* ---------- Switch rows ---------- */
+
+.switch__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.switch__note {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* ---------- Statistics ---------- */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.layout--phone .stat-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 8px;
+  border: 2px solid var(--line-strong);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--surface-lift), var(--surface));
+  box-shadow: 0 4px 0 var(--line-strong);
+  text-align: center;
+}
+
+.stat-tile__value {
+  font-size: 26px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.stat-tile__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stat-bar {
+  margin-top: 10px;
+}
+
+.stat-bar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stat-bar__value {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.stat-bar__track {
+  height: 12px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 35%);
+  overflow: hidden;
+}
+
+.stat-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  transition: width 420ms cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+
+.stat-bar__fill--black {
+  background: linear-gradient(90deg, #4a4a4a, #101010);
+}
+
+.stat-bar__fill--white {
+  background: linear-gradient(90deg, #cdd3ce, #ffffff);
+}
+
+.stat-bar__fill--draw {
+  background: linear-gradient(90deg, #6a7a70, #9db8a8);
+}
+
+.stat-bar__fill--debutant {
+  background: linear-gradient(90deg, #2f7f57, #58c98c);
+}
+
+.stat-bar__fill--normal {
+  background: linear-gradient(90deg, #2a6690, #4c9be2);
+}
+
+.stat-bar__fill--fort {
+  background: linear-gradient(90deg, #8a3550, #e2574c);
 }
 
 .btn-icon {

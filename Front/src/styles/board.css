@@ -5,9 +5,27 @@
   min-width: 0;
 }
 
+/* Two players on one phone: a vertical swipe turns the whole board round for the player
+   sitting opposite. The rotation lives on the board itself so every mark turns with it. */
+.board-frame .board {
+  transition: transform 560ms cubic-bezier(0.4, 0.05, 0.3, 1);
+}
+
+.board-frame--flipped .board {
+  transform: rotate(180deg);
+}
+
+.board-flip-note {
+  margin: 0;
+  font-size: 11px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 /* Square in every situation. The ceiling comes from the layout class, never from vh/vw,
    so the board is correct inside the preview frame too. */
 .board {
+  position: relative;
   width: min(100%, var(--board-max));
   aspect-ratio: 1;
   display: grid;
@@ -32,8 +50,9 @@
   box-sizing: border-box;
   background: var(--board-felt);
   cursor: default;
-  /* Perspective is what turns a flat rotation into a piece you see turning over. */
-  perspective: 380px;
+  /* Perspective is what turns a flat rotation into a piece you see turning over.
+     Kept short so the lean at rest is enough to reveal the rim. */
+  perspective: 300px;
 }
 
 .board-cell--playable {
@@ -71,7 +90,23 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  animation: disc-drop 200ms ease-out;
+  /* Drop and flip timings come from src/constants/timing.ts, which also paces the turn. */
+  --drop-ms: 360ms;
+  --flip-ms: 1300ms;
+  --flip-delay: 0ms;
+  --telegraph-ms: 520ms;
+}
+
+/* The computer's move runs slower: it is the one the player did not choose. */
+.board--slow .disc-slot {
+  --drop-ms: 620ms;
+  --flip-ms: 1850ms;
+  --telegraph-ms: 760ms;
+}
+
+/* Only the square that was just played drops in; the others were already there. */
+.disc-slot--landed {
+  animation: disc-drop var(--drop-ms) cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 
 /* The drop animation lives on the slot so it never fights the flip rotation below. */
@@ -80,13 +115,167 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  /* Slow enough to watch the piece stand on its rim and show its other face.
-     The overshoot at the end gives it weight. */
-  transition: transform 1150ms cubic-bezier(0.36, 1.24, 0.42, 1);
+  /* The piece leans back a few degrees at rest. That is what shows its rim, and with it the
+     hint that a second face is hiding underneath. */
+  transform: rotateX(-16deg);
+  /* Slow enough to watch it stand on its rim and show that other face. The wait before the
+     rotation starts is what makes the capture ripple outward from the played square. */
+  /* Nothing turns during the telegraph: the outline is shown first, then the disc goes. */
+  transition: transform var(--flip-ms) cubic-bezier(0.4, 0.05, 0.3, 1)
+    calc(var(--telegraph-ms) + var(--flip-delay));
+}
+
+/* ---------- Announcing the capture ---------- */
+
+/*
+ * Discs about to be turned are ringed in the colour that is coming for them, and a beam is
+ * drawn from the played square along each direction of the capture. Both fade out exactly
+ * when that disc starts to turn, so the announcement hands over to the movement.
+ */
+.disc__doom {
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  border: 3px solid var(--doom);
+  box-shadow:
+    0 0 10px var(--doom),
+    inset 0 0 8px var(--doom);
+  opacity: 0;
+  pointer-events: none;
+  animation: doom-ring calc(var(--telegraph-ms) + var(--flip-delay)) ease-out;
+}
+
+/* The ring wears the colour of the side that is capturing, not of the disc. */
+.disc-slot--doomed {
+  --doom: var(--at-risk);
+  /* The turning disc leaves the board: it rises while it rotates, then lands with a small
+     squash. Same duration and delay as the rotation, so the two read as one movement. */
+  animation: disc-hop var(--flip-ms) cubic-bezier(0.34, 0.1, 0.28, 1)
+    calc(var(--telegraph-ms) + var(--flip-delay)) both;
+}
+
+/* Its shadow stays on the felt and thins out while the disc is up in the air. */
+.disc-slot--doomed::before {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -4%;
+  height: 14%;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 40%);
+  filter: blur(2px);
+  animation: disc-hop-shadow var(--flip-ms) cubic-bezier(0.34, 0.1, 0.28, 1)
+    calc(var(--telegraph-ms) + var(--flip-delay)) both;
+}
+
+@keyframes disc-hop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  38% {
+    transform: translateY(-16%) scale(1.18);
+  }
+  72% {
+    transform: translateY(0) scale(1.02);
+  }
+  83% {
+    transform: translateY(0) scale(1.06, 0.9);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes disc-hop-shadow {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  38% {
+    opacity: 0.22;
+    transform: scale(1.3);
+  }
+  72%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+}
+
+.board--capture-black .disc-slot--doomed {
+  --doom: #ffd45e;
+}
+
+.board--capture-white .disc-slot--doomed {
+  --doom: #7fe3ff;
+}
+
+.board-beams {
+  position: absolute;
+  inset: 2px;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.board-beam {
+  stroke: var(--beam);
+  stroke-width: 0.14;
+  stroke-linecap: round;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px var(--beam));
+  animation: beam-sweep var(--beam-ms, 900ms) ease-out;
+}
+
+.board-beams--black {
+  --beam: #ffd45e;
+  --beam-ms: 1100ms;
+}
+
+.board-beams--white {
+  --beam: #7fe3ff;
+  --beam-ms: 1100ms;
+}
+
+@keyframes doom-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  35% {
+    opacity: 0.95;
+    transform: scale(1.06);
+  }
+  75% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes beam-sweep {
+  0% {
+    opacity: 0;
+    stroke-dasharray: 0 12;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.7;
+    stroke-dasharray: 12 0;
+  }
+  100% {
+    opacity: 0;
+    stroke-dasharray: 12 0;
+  }
 }
 
 .disc--white {
-  transform: rotateY(180deg);
+  transform: rotateX(-16deg) rotateY(180deg);
 }
 
 .disc__face {
@@ -95,31 +284,46 @@
   border-radius: 50%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  box-shadow: inset 0 -2px 4px rgb(0 0 0 / 35%);
 }
 
 .disc__face--black {
-  background: radial-gradient(circle at 32% 28%, #4a4a4a, #111 68%);
-  transform: translateZ(3px);
+  background: radial-gradient(circle at 32% 26%, #56585c, #131416 70%);
+  transform: translateZ(6px);
+  /* Bottom rim catches the light; the top edge stays dark. Reads as a thick token,
+     and the pale ring along the rim is the white underside peeking round the side. */
+  box-shadow:
+    inset 0 -3px 5px rgb(0 0 0 / 55%),
+    inset 0 3px 6px rgb(255 255 255 / 14%),
+    inset 0 0 0 2px rgb(255 255 255 / 10%);
 }
 
 .disc__face--white {
-  transform: rotateY(180deg) translateZ(3px);
-  background: radial-gradient(circle at 32% 28%, #ffffff, #cdd3ce 72%);
+  transform: rotateY(180deg) translateZ(6px);
+  background: radial-gradient(circle at 32% 26%, #ffffff, #c8cfc9 74%);
+  /* The dark lip along the rim is the black underside showing through. */
+  box-shadow:
+    inset 0 -4px 6px rgb(24 30 26 / 45%),
+    inset 0 3px 6px rgb(255 255 255 / 70%),
+    inset 0 0 0 2px rgb(20 24 22 / 22%);
 }
 
-/* Side of the piece: only visible while it is edge-on, which is exactly when the eye
-   needs something to hold on to. */
-.disc__edge {
+/*
+ * Body of the piece: full-circle slices stacked in depth. Seen edge-on — which is exactly
+ * what the flip shows — they merge into a solid rim, dark on the black half, pale on the
+ * white half, with a seam in the middle like a real two-colour piece.
+ */
+.disc__core {
   position: absolute;
-  top: 2%;
-  left: 50%;
-  width: 6px;
-  height: 96%;
-  margin-left: -3px;
-  border-radius: 3px;
-  transform: rotateY(90deg);
-  background: linear-gradient(to right, #2a2a2a, #b9c0ba 45%, #7d857f 55%, #1c1c1c);
+  inset: 0;
+  border-radius: 50%;
+}
+
+.disc__core--dark {
+  background: linear-gradient(180deg, #33363a 0%, #191b1d 55%, #0c0d0e 100%);
+}
+
+.disc__core--light {
+  background: linear-gradient(180deg, #f2f6f1 0%, #cbd2cb 55%, #a7afa8 100%);
 }
 
 /* A stable disc can never be flipped again: it wears a quiet ring. */
@@ -155,12 +359,20 @@
   pointer-events: none;
 }
 
+/* The piece falls from above the board and settles, rather than appearing. */
 @keyframes disc-drop {
-  from {
-    transform: scale(0.4);
+  0% {
+    transform: translateY(-46%) scale(0.62);
+    opacity: 0;
   }
-  to {
-    transform: scale(1);
+  45% {
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(0) scale(1.08, 0.92);
+  }
+  100% {
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -177,12 +389,20 @@
 @media (prefers-reduced-motion: reduce) {
   .disc,
   .disc-slot,
-  .board-hint {
+  .disc-slot--doomed,
+  .disc-slot--doomed::before,
+  .board-hint,
+  .disc__doom,
+  .board-beam {
     transition: none;
     animation: none;
   }
 
   .disc-slot--at-risk::before {
     animation: none;
+  }
+
+  .board-frame .board {
+    transition: none;
   }
 }

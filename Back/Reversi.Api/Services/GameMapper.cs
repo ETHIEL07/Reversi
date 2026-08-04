@@ -28,7 +28,23 @@ public static class GameMapper
             Level: record.Level,
             HumanColor: record.HumanColor,
             LegalMoves: game.LegalMoves.Select(ToLegalMoveDto).ToArray(),
-            Analysis: analysis.Cells.Select(ToCellAnalysisDto).ToArray());
+            Analysis: analysis.Cells.Select(ToCellAnalysisDto).ToArray(),
+            LastMove: ToLastMoveDto(game.History.Count == 0 ? null : game.History[^1]));
+    }
+
+    public static LastMoveDto? ToLastMoveDto(PlayedMove? move)
+    {
+        if (move?.Position is not { } position)
+        {
+            return null;
+        }
+
+        return new LastMoveDto(
+            position.Row,
+            position.Col,
+            move.Player,
+            move.IsPass,
+            move.Flips.Select(flip => flip.Notation).ToArray());
     }
 
     public static ScoreDto ToScoreDto(Score score) => new(score.Black, score.White);

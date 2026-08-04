@@ -31,6 +31,15 @@ export type CellAnalysis = {
   isAtRisk: boolean
 }
 
+/** The move that produced the current board: where the disc landed, and what it turned. */
+export type LastMove = {
+  row: number
+  col: number
+  player: Player
+  isPass: boolean
+  flips: string[]
+}
+
 export type GameState = {
   id: string
   board: string[]
@@ -46,6 +55,26 @@ export type GameState = {
   humanColor: Player
   legalMoves: LegalMove[]
   analysis: CellAnalysis[]
+  lastMove: LastMove | null
+}
+
+export type GameSummary = {
+  id: string
+  createdAt: string
+  updatedAt: string
+  opponent: OpponentKind
+  level: AiLevel | null
+  status: GameStatus
+  moveCount: number
+  score: Score
+}
+
+export type PagedResult<T> = {
+  items: T[]
+  page: number
+  pageSize: number
+  total: number
+  pageCount: number
 }
 
 export type MoveHistoryEntry = {

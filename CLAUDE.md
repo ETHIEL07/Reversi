@@ -8,6 +8,9 @@ est le but.
 **LOCAL.** Git 100 % manuel : commit / push / pull déclenchés par JM uniquement. Claude ne
 commit jamais et n'en parle pas. Pas de branches, pas de worktrees.
 
+Dépôt : **https://github.com/ETHIEL07/Reversi** (public, branche `main`), créé le 3 août 2026
+sur demande explicite de JM. Rien n'est poussé sans qu'il le demande.
+
 ## Emplacement
 
 `C:\Users\amich\Dev\Test\Reversi`
@@ -47,6 +50,7 @@ Les `_Run*.cmd` font **build + run**. Ne jamais demander un `dotnet build` sépa
 | `_RunFrontReversi.cmd` | kill + `tsc -b` + `npm run dev` sur 5213, ouvre le navigateur |
 | `_RunAllTests.cmd` | suite NUnit complète |
 | `_KillProcesses.cmd` | arrête tout sur 5210/5211/5213/5215 |
+| `_RunSeedReversi.cmd` | crée des parties de démonstration **via l'API publique** |
 | `_DropDbDevReversi.cmd` | drop de `Reversi_dev` |
 
 ## API
@@ -61,9 +65,11 @@ coups sans structure supplémentaire.
 | GET | `/api/games` (paginée) |
 | GET | `/api/games/{id}` |
 | GET | `/api/games/{id}/moves` |
-| POST | `/api/games/{id}/moves` |
+| POST | `/api/games/{id}/moves` (avec `deferComputer`, l'ordinateur ne répond pas tout de suite) |
+| POST | `/api/games/{id}/advance` (l'ordinateur joue son tour en attente) |
 | POST | `/api/games/{id}/pass` |
 | POST | `/api/games/{id}/undo` |
+| POST | `/api/games/{id}/rewind` (Fil de partie : remonte au coup N) |
 | POST | `/api/games/{id}/demo` (Joker : charge une position toute faite) |
 | GET | `/api/games/{id}/history` |
 | GET | `/api/version` |
@@ -83,6 +89,22 @@ Les trois formats sont pilotés par les classes `layout--phone` / `layout--table
 cadre de prévisualisation les media queries voient la fenêtre, pas le cadre. Le plafond du
 plateau vient de la variable `--board-max` posée par ces classes — **aucun `vh` ni `vw` dans le
 dimensionnement du plateau**, sinon le cadre est faux.
+
+Les sons sont **synthétisés** avec la Web Audio API (`src/audio/sounds.ts`), jamais chargés
+comme fichiers : rien à télécharger, rien à mettre en cache, et le son fonctionne hors ligne
+une fois la PWA installée.
+
+Un coup contre l'ordinateur se joue en **deux temps** : `POST /moves` avec `deferComputer`
+renvoie le plateau juste après le coup humain, le front laisse l'animation se terminer, puis
+`POST /advance` déclenche la réponse. Envoyés ensemble, les deux coups arrivent dans la même
+réponse et le premier n'est jamais vu. Les durées vivent dans `src/constants/timing.ts` et
+sont partagées avec le CSS ; les pions retournés partent en vagues concentriques depuis la
+case jouée.
+
+Le terrain (`Options`) n'est qu'un bloc de variables CSS dans `styles/terrains.css`, posé sur
+`documentElement` via `data-terrain`. La langue suit le même principe : tout le texte affiché
+vit dans `src/i18n/dictionary.ts`, consommé en objet (`t.game.undo`) et non par clé, pour
+qu'une entrée manquante casse la compilation au lieu de laisser un blanc à l'écran.
 
 Le disque est en deux couches : `.disc-slot` reste droit et porte la couronne des coins et les
 anneaux d'état, `.disc` porte la rotation `rotateY(180deg)` qui produit l'animation de

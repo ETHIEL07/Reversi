@@ -49,6 +49,12 @@ public static class GameEndpoints
             .Produces<ErrorDto>(StatusCodes.Status400BadRequest)
             .Produces<ErrorDto>(StatusCodes.Status404NotFound);
 
+        group.MapPost("/{id:guid}/advance", AdvanceComputer)
+            .WithName("AdvanceComputer")
+            .WithSummary("Lets the computer play its pending turn, after the human move has been seen")
+            .Produces<GameStateDto>(StatusCodes.Status200OK)
+            .Produces<ErrorDto>(StatusCodes.Status404NotFound);
+
         group.MapPost("/{id:guid}/pass", PassTurn)
             .WithName("PassTurn")
             .WithSummary("Forfeits the turn, allowed only when no legal move exists")
@@ -59,6 +65,13 @@ public static class GameEndpoints
         group.MapPost("/{id:guid}/undo", UndoMove)
             .WithName("UndoMove")
             .WithSummary("Cancels the last entry of the history")
+            .Produces<GameStateDto>(StatusCodes.Status200OK)
+            .Produces<ErrorDto>(StatusCodes.Status400BadRequest)
+            .Produces<ErrorDto>(StatusCodes.Status404NotFound);
+
+        group.MapPost("/{id:guid}/rewind", Rewind)
+            .WithName("RewindGame")
+            .WithSummary("Rewinds the game to a given point of its history")
             .Produces<GameStateDto>(StatusCodes.Status200OK)
             .Produces<ErrorDto>(StatusCodes.Status400BadRequest)
             .Produces<ErrorDto>(StatusCodes.Status404NotFound);
@@ -177,9 +190,42 @@ public static class GameEndpoints
             return Results.BadRequest(new ErrorDto(exception.Message));
         }
 
-        GameService.AdvanceComputer(record, game);
+        // Deferred: the caller wants to show this move on its own before the reply arrives.
+        if (!request.DeferComputer)
+        {
+            GameService.AdvanceComputer(record, game);
+        }
 
         await games.SaveAsync(record, game, cancellationToken);
+
+        return Results.Ok(GameMapper.ToStateDto(record, game));
+    }
+
+    /// <summary>
+    /// Plays the computer's pending turn. Doing nothing when it is not its turn keeps the call
+    /// safe to repeat, which matters when it is fired from an animation callback.
+    /// </summary>
+    private static async Task<IResult> AdvanceComputer(
+        Guid id,
+        GameService games,
+        CancellationToken cancellationToken)
+    {
+        var record = await games.FindAsync(id, cancellationToken);
+
+        if (record is null)
+        {
+            return NotFound(id);
+        }
+
+        var game = GameService.Rebuild(record);
+        var before = game.History.Count;
+
+        GameService.AdvanceComputer(record, game);
+
+        if (game.History.Count != before)
+        {
+            await games.SaveAsync(record, game, cancellationToken);
+        }
 
         return Results.Ok(GameMapper.ToStateDto(record, game));
     }
@@ -237,6 +283,37 @@ public static class GameEndpoints
         catch (InvalidOperationException exception)
         {
             return Results.BadRequest(new ErrorDto(exception.Message));
+        }
+
+        await games.SaveAsync(record, game, cancellationToken);
+
+        return Results.Ok(GameMapper.ToStateDto(record, game));
+    }
+
+    private static async Task<IResult> Rewind(
+        Guid id,
+        RewindRequest request,
+        GameService games,
+        CancellationToken cancellationToken)
+    {
+        var record = await games.FindAsync(id, cancellationToken);
+
+        if (record is null)
+        {
+            return NotFound(id);
+        }
+
+        var game = GameService.Rebuild(record);
+
+        if (request.MoveNumber < 0 || request.MoveNumber > game.History.Count)
+        {
+            return Results.BadRequest(new ErrorDto(
+                $"Move {request.MoveNumber} is outside the history, which holds {game.History.Count} entries."));
+        }
+
+        while (game.History.Count > request.MoveNumber)
+        {
+            game.Undo();
         }
 
         await games.SaveAsync(record, game, cancellationToken);

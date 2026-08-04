@@ -1,40 +1,77 @@
 .screen {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
   min-width: 0;
   margin: 0 auto;
+  padding: 0 16px;
 }
 
 .screen--centered {
+  position: relative;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
+/* Taken out of the flow so the menu stays centred and the button sits high on the screen. */
+.screen__bar--full {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* The arrow turns a full circle when the button is pressed. */
+.icon--loop {
+  transition: transform 520ms cubic-bezier(0.4, 0.05, 0.3, 1);
+}
+
+.btn--loop:hover .icon--loop {
+  transform: rotate(-120deg);
+}
+
+.btn--loop:active .icon--loop {
+  transform: rotate(-360deg);
+  transition-duration: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon--loop {
+    transition: none;
+  }
+}
+
 .screen__bar {
   display: flex;
   align-items: center;
-  min-height: 34px;
+  gap: 12px;
+  min-height: 32px;
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
 }
 
 .screen__body {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   flex: 1;
 }
 
 .screen__title {
   margin: 0;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 800;
 }
 
 .screen__lead {
   margin: 0;
-  max-width: 34ch;
+  max-width: 36ch;
   color: var(--text-muted);
   line-height: 1.5;
 }
@@ -44,92 +81,44 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
+/* ---------- Home ---------- */
+
+.home {
+  gap: 22px;
+}
+
+.home-hero {
+  display: flex;
+  align-items: flex-end;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-weight: 500;
-  cursor: pointer;
-  box-sizing: border-box;
-  transition:
-    background-color 140ms ease-out,
-    border-color 140ms ease-out;
+  gap: 4px;
+  width: 100%;
+  max-width: 460px;
 }
 
-.btn:hover:not(:disabled) {
-  background: var(--surface-hover);
-  border-color: var(--line-strong);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.btn--primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #0d1b14;
-  font-weight: 600;
-}
-
-.btn--primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-}
-
-.btn--menu {
+.home-hero__title {
+  display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 16px 18px;
-  font-size: 16px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
 }
 
-.btn--ghost {
-  background: transparent;
-  border-color: transparent;
-  padding: 8px 10px;
+.home-hero .champion {
+  width: 84px;
+  height: 104px;
+  flex: none;
 }
 
-.btn--ghost:hover:not(:disabled) {
-  background: var(--surface);
-  border-color: var(--line);
+.layout--phone .home-hero .champion {
+  width: 66px;
+  height: 82px;
 }
 
-.btn--icon-text {
-  gap: 6px;
-}
-
-.btn__note {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-.icon {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* ---------- Score bar ---------- */
 
 .score-bar {
   display: flex;
@@ -138,9 +127,10 @@
   gap: 12px;
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--surface);
+  border: 2px solid var(--line-strong);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--surface-lift), var(--surface));
+  box-shadow: 0 4px 0 var(--line-strong);
   box-sizing: border-box;
 }
 
@@ -148,19 +138,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  border: 1px solid transparent;
+  padding: 4px 10px;
+  border-radius: 10px;
+  border: 2px solid transparent;
 }
 
 .score--active {
   border-color: var(--accent);
-  background: var(--surface-hover);
+  background: rgb(88 201 140 / 12%);
 }
 
 .score__disc {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   box-shadow: inset 0 -2px 3px rgb(0 0 0 / 35%);
 }
@@ -174,8 +164,8 @@
 }
 
 .score__value {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 900;
   font-variant-numeric: tabular-nums;
   min-width: 2ch;
   text-align: center;
@@ -183,24 +173,38 @@
 
 .score-bar__turn {
   margin: 0;
-  font-size: 13px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--text-muted);
   text-align: center;
 }
 
+/* ---------- Actions ---------- */
+
 .actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
+}
+
+.actions .btn {
+  flex: 1;
+}
+
+.actions--secondary .btn {
+  flex: 1;
 }
 
 .error {
   margin: 0;
   padding: 10px 14px;
-  border: 1px solid var(--danger);
-  border-radius: 8px;
+  border: 2px solid var(--danger);
+  border-radius: 12px;
   color: var(--danger);
-  background: rgb(226 121 95 / 10%);
+  background: rgb(226 121 95 / 12%);
   text-align: center;
+  font-weight: 600;
 }

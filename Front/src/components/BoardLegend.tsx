@@ -1,8 +1,12 @@
+import { useT } from '../i18n/useT'
+
 /**
  * Legend of every mark drawn on the board. Shown in the manual and reachable from the game,
  * because a mark nobody can decode is decoration.
  */
 export function BoardLegend({ scope }: { scope: string }) {
+  const t = useT()
+
   return (
     <ul className="legend" data-testid={`${scope}-view-legend`}>
       <li className="legend__item" data-testid={`${scope}-view-legend-hint`}>
@@ -12,8 +16,8 @@ export function BoardLegend({ scope }: { scope: string }) {
           </span>
         </span>
         <span className="legend__text">
-          <strong>Point clair</strong>
-          <span>Une case où le coup est autorisé. Poser un pion ici retourne au moins un pion adverse.</span>
+          <strong>{t.legend.hint}</strong>
+          <span>{t.legend.hintNote}</span>
         </span>
       </li>
 
@@ -24,11 +28,8 @@ export function BoardLegend({ scope }: { scope: string }) {
           </span>
         </span>
         <span className="legend__text">
-          <strong>Couronne</strong>
-          <span>
-            Le pion occupe un coin. Un coin ne peut jamais être retourné : la case est acquise pour toute la
-            partie.
-          </span>
+          <strong>{t.legend.crown}</strong>
+          <span>{t.legend.crownNote}</span>
         </span>
       </li>
 
@@ -39,11 +40,8 @@ export function BoardLegend({ scope }: { scope: string }) {
           </span>
         </span>
         <span className="legend__text">
-          <strong>Anneau vert</strong>
-          <span>
-            Pion assuré. Plus aucun coup, d&apos;un camp comme de l&apos;autre, ne pourra le retourner. La
-            stabilité part des coins et se propage le long des bords.
-          </span>
+          <strong>{t.legend.stable}</strong>
+          <span>{t.legend.stableNote}</span>
         </span>
       </li>
 
@@ -54,11 +52,8 @@ export function BoardLegend({ scope }: { scope: string }) {
           </span>
         </span>
         <span className="legend__text">
-          <strong>Anneau jaune pointillé</strong>
-          <span>
-            Pion menacé. Le camp au trait peut le retourner dès son prochain coup. L&apos;anneau disparaît dès
-            que la menace n&apos;existe plus.
-          </span>
+          <strong>{t.legend.atRisk}</strong>
+          <span>{t.legend.atRiskNote}</span>
         </span>
       </li>
     </ul>

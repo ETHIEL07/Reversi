@@ -31,10 +31,14 @@ builder.Services.AddScoped<GameService>();
 
 const string FrontCorsPolicy = "front";
 
+// Origins from config, with dev defaults as fallback.
+var frontOrigins = builder.Configuration.GetSection("FrontOrigins").Get<string[]>()
+    ?? ["http://localhost:5213", "http://127.0.0.1:5213"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(FrontCorsPolicy, policy => policy
-        .WithOrigins("http://localhost:5213", "http://127.0.0.1:5213")
+        .WithOrigins(frontOrigins)
         .AllowAnyHeader()
         .AllowAnyMethod());
 });

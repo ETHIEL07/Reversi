@@ -20,6 +20,17 @@ public sealed record CellAnalysisDto(
     bool IsStable,
     bool IsAtRisk);
 
+/// <summary>
+/// The move that produced the current board. The front animates from this square: the disc
+/// lands there, then the flips ripple outward from it.
+/// </summary>
+public sealed record LastMoveDto(
+    int Row,
+    int Col,
+    Player Player,
+    bool IsPass,
+    IReadOnlyList<string> Flips);
+
 /// <summary>One entry of the move timeline.</summary>
 public sealed record MoveHistoryEntryDto(
     int Number,
@@ -43,7 +54,8 @@ public sealed record GameStateDto(
     AiLevel? Level,
     Player HumanColor,
     IReadOnlyList<LegalMoveDto> LegalMoves,
-    IReadOnlyList<CellAnalysisDto> Analysis);
+    IReadOnlyList<CellAnalysisDto> Analysis,
+    LastMoveDto? LastMove);
 
 /// <summary>Row of the paged game list.</summary>
 public sealed record GameSummaryDto(

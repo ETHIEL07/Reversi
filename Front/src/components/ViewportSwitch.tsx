@@ -1,22 +1,25 @@
 import { DEVICE_PRESETS, type PreviewMode } from '../types/layout'
+import { useT } from '../i18n/useT'
 
 type ViewportSwitchProps = {
   value: PreviewMode
   onChange: (mode: PreviewMode) => void
 }
 
-const OPTIONS: { mode: PreviewMode; label: string; slug: string }[] = [
-  { mode: 'auto', label: 'Auto', slug: 'auto' },
-  { mode: 'phone', label: DEVICE_PRESETS.phone.label, slug: DEVICE_PRESETS.phone.slug },
-  { mode: 'tablet', label: DEVICE_PRESETS.tablet.label, slug: DEVICE_PRESETS.tablet.slug },
-  { mode: 'fhd', label: DEVICE_PRESETS.fhd.label, slug: DEVICE_PRESETS.fhd.slug },
-]
-
 /** Header toggle that previews the three target formats without resizing the window. */
 export function ViewportSwitch({ value, onChange }: ViewportSwitchProps) {
+  const t = useT()
+
+  const options: { mode: PreviewMode; label: string; slug: string }[] = [
+    { mode: 'auto', label: t.app.preview.auto, slug: 'auto' },
+    { mode: 'phone', label: t.app.preview.phone, slug: DEVICE_PRESETS.phone.slug },
+    { mode: 'tablet', label: t.app.preview.tablet, slug: DEVICE_PRESETS.tablet.slug },
+    { mode: 'fhd', label: t.app.preview.fhd, slug: DEVICE_PRESETS.fhd.slug },
+  ]
+
   return (
-    <div className="viewport-switch" role="group" aria-label="Format de prévisualisation" data-testid="app-view-viewport">
-      {OPTIONS.map((option) => (
+    <div className="viewport-switch" role="group" aria-label="Format" data-testid="app-view-viewport">
+      {options.map((option) => (
         <button
           key={option.mode}
           type="button"

@@ -1,34 +1,18 @@
+import type { Pose } from '../components/Champion'
 import type { AiLevel } from '../types/game'
 
 export type LevelChoice = {
   level: AiLevel
-  label: string
   slug: string
-  face: string
-  description: string
+  /** Attitude the champion strikes on the difficulty card. */
+  pose: Pose
+  /** How many pips light up on the power meter. */
+  power: 1 | 2 | 3
 }
 
-/** The three levels, each with the mood it plays in. Labels in French, values in English. */
+/** The three levels. Wording lives in the dictionary; only the artwork is decided here. */
 export const LEVELS: LevelChoice[] = [
-  {
-    level: 'Beginner',
-    label: 'Débutant',
-    slug: 'debutant',
-    face: '🙂',
-    description: 'Joue au hasard parmi les coups possibles. Idéal pour apprendre.',
-  },
-  {
-    level: 'Normal',
-    label: 'Normal',
-    slug: 'normal',
-    face: '🤔',
-    description: 'Prend le plus de pions possible à chaque coup.',
-  },
-  {
-    level: 'Strong',
-    label: 'Fort',
-    slug: 'fort',
-    face: '😈',
-    description: 'Anticipe plusieurs coups à l’avance et vise les coins.',
-  },
+  { level: 'Beginner', slug: 'debutant', pose: 'pleased', power: 1 },
+  { level: 'Normal', slug: 'normal', pose: 'thinking', power: 2 },
+  { level: 'Strong', slug: 'fort', pose: 'taunt', power: 3 },
 ]

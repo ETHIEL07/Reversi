@@ -18,7 +18,18 @@ public sealed record CreateGameRequest(
 /// Plays a square. <paramref name="Player"/> is optional; when supplied it must match the
 /// side to move, which is how playing out of turn is rejected.
 /// </summary>
-public sealed record PlayMoveRequest(int Row, int Col, Player? Player = null);
+/// <param name="DeferComputer">
+/// When true the computer does not reply in the same response. The caller gets the board as it
+/// stands right after the human move and asks for the reply with <c>/advance</c> once its
+/// animation has been seen. Without it the two moves land together and the first is invisible.
+/// </param>
+public sealed record PlayMoveRequest(int Row, int Col, Player? Player = null, bool DeferComputer = false);
 
 /// <summary>Loads a ready-made position into an existing game, for demonstration and testing.</summary>
 public sealed record LoadDemoRequest(DemoPosition Position = DemoPosition.MidGame);
+
+/// <summary>
+/// Rewinds the game to the state it had after <paramref name="MoveNumber"/> entries of the
+/// history. Zero goes back to the opening position.
+/// </summary>
+public sealed record RewindRequest(int MoveNumber);

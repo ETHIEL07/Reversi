@@ -306,6 +306,160 @@ public class GameEndpointsTests
     }
 
     [Test]
+    public async Task PlayMove_WithDeferComputer_LeavesTheReplyPending()
+    {
+        var game = await CreateGameAsync(OpponentKind.Computer, AiLevel.Beginner);
+
+        var response = await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/moves",
+            new PlayMoveRequest(2, 3, null, DeferComputer: true),
+            ReversiApiFactory.Json);
+
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.Multiple(() =>
+        {
+            // Only the human move landed, so the front can show it on its own.
+            Assert.That(state!.MoveCount, Is.EqualTo(1));
+            Assert.That(state.CurrentPlayer, Is.EqualTo(Player.White));
+            Assert.That(state.LastMove, Is.Not.Null);
+            Assert.That(state.LastMove!.Row, Is.EqualTo(2));
+            Assert.That(state.LastMove.Col, Is.EqualTo(3));
+            Assert.That(state.LastMove.Player, Is.EqualTo(Player.Black));
+            Assert.That(state.LastMove.Flips, Is.Not.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Advance_PlaysThePendingComputerTurn()
+    {
+        var game = await CreateGameAsync(OpponentKind.Computer, AiLevel.Beginner);
+
+        await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/moves",
+            new PlayMoveRequest(2, 3, null, DeferComputer: true),
+            ReversiApiFactory.Json);
+
+        var response = await client.PostAsync($"/api/games/{game.Id}/advance", null);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state!.MoveCount, Is.EqualTo(2));
+            Assert.That(state.CurrentPlayer, Is.EqualTo(Player.Black));
+            Assert.That(state.LastMove!.Player, Is.EqualTo(Player.White));
+        });
+    }
+
+    [Test]
+    public async Task Advance_OnTheHumanTurnChangesNothing()
+    {
+        var game = await CreateGameAsync(OpponentKind.Computer, AiLevel.Beginner);
+
+        // Called twice in a row: the second one has no pending computer turn to play.
+        await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/moves",
+            new PlayMoveRequest(2, 3, null, DeferComputer: true),
+            ReversiApiFactory.Json);
+
+        await client.PostAsync($"/api/games/{game.Id}/advance", null);
+
+        var response = await client.PostAsync($"/api/games/{game.Id}/advance", null);
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(state!.MoveCount, Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public async Task Advance_ReturnsNotFoundForAnUnknownGame()
+    {
+        var response = await client.PostAsync($"/api/games/{Guid.NewGuid()}/advance", null);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+    }
+
+    [Test]
+    public async Task PlayMove_WithoutTheFlag_StillAnswersImmediately()
+    {
+        var game = await CreateGameAsync(OpponentKind.Computer, AiLevel.Beginner);
+
+        var response = await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/moves",
+            new PlayMoveRequest(2, 3),
+            ReversiApiFactory.Json);
+
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.That(state!.MoveCount, Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task Rewind_TakesTheGameBackToAGivenMove()
+    {
+        var game = await CreateGameAsync();
+
+        await client.PostAsJsonAsync($"/api/games/{game.Id}/demo", new LoadDemoRequest(DemoPosition.MidGame), ReversiApiFactory.Json);
+
+        var response = await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/rewind",
+            new RewindRequest(6),
+            ReversiApiFactory.Json);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state!.MoveCount, Is.EqualTo(6));
+            Assert.That(state.IsOver, Is.False);
+            Assert.That(state.LegalMoves, Is.Not.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Rewind_ToZeroRestoresTheOpeningPosition()
+    {
+        var game = await CreateGameAsync();
+
+        await client.PostAsJsonAsync($"/api/games/{game.Id}/moves", new PlayMoveRequest(2, 3), ReversiApiFactory.Json);
+
+        var response = await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/rewind",
+            new RewindRequest(0),
+            ReversiApiFactory.Json);
+
+        var state = await response.Content.ReadFromJsonAsync<GameStateDto>(ReversiApiFactory.Json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(state!.MoveCount, Is.Zero);
+            Assert.That(state.Score, Is.EqualTo(new ScoreDto(2, 2)));
+            Assert.That(state.CurrentPlayer, Is.EqualTo(Player.Black));
+        });
+    }
+
+    [Test]
+    public async Task Rewind_BeyondTheHistoryIsRejected()
+    {
+        var game = await CreateGameAsync();
+
+        var response = await client.PostAsJsonAsync(
+            $"/api/games/{game.Id}/rewind",
+            new RewindRequest(40),
+            ReversiApiFactory.Json);
+
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+    }
+
+    [Test]
     public async Task LoadDemo_ReturnsNotFoundForAnUnknownGame()
     {
         var response = await client.PostAsJsonAsync(

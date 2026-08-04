@@ -1,0 +1,422 @@
+.avatar-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+}
+
+.player-card {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 2px 4px 4px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-deep));
+  box-shadow: 0 2px 0 var(--line-strong);
+  text-align: center;
+  transition:
+    border-color 180ms ease-out,
+    box-shadow 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.player-card--active {
+  border-color: var(--accent);
+  box-shadow:
+    0 2px 0 var(--accent-deep),
+    0 0 16px rgb(111 211 155 / 20%);
+  transform: translateY(-2px);
+}
+
+.player-card__name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-card__line {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.player-card--active .player-card__line {
+  color: var(--accent);
+}
+
+/* ---------- The character ---------- */
+
+.champion {
+  width: 56px;
+  height: 68px;
+  overflow: visible;
+}
+
+.layout--phone .champion {
+  width: 48px;
+  height: 58px;
+}
+
+.layout--tablet .champion,
+.layout--fhd .champion {
+  width: 66px;
+  height: 82px;
+}
+
+.champion--faces-left {
+  transform: scaleX(-1);
+}
+
+.champion__shadow {
+  fill: rgb(0 0 0 / 30%);
+}
+
+/* Skin, beard and robe change with the side, the drawing does not. */
+.champion__face,
+.champion__ear {
+  fill: #f2c9a0;
+  stroke: #b7855b;
+  stroke-width: 2;
+}
+
+.champion__nose {
+  fill: #e8ac83;
+  stroke: #b7855b;
+  stroke-width: 1.6;
+}
+
+.champion__beard {
+  stroke-width: 2;
+}
+
+.champion--black .champion__beard {
+  fill: #6d7480;
+  stroke: #3c424c;
+}
+
+.champion--white .champion__beard {
+  fill: #f0f3ee;
+  stroke: #b9c2ba;
+}
+
+/* Robe and sleeve colours live in styles/terrains.css: the outfit follows the battlefield. */
+
+.champion__robe {
+  stroke-width: 2.5;
+}
+
+.champion__collar {
+  fill: none;
+  stroke: rgb(0 0 0 / 25%);
+  stroke-width: 2;
+}
+
+.champion__arm {
+  fill: none;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.champion__hand {
+  fill: #f2c9a0;
+  stroke: #b7855b;
+  stroke-width: 2;
+}
+
+.champion__brow {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.champion--black .champion__brow {
+  stroke: #565d69;
+}
+
+.champion--white .champion__brow {
+  stroke: #cfd6cd;
+}
+
+.champion__sclera {
+  fill: #ffffff;
+  stroke: #6b4a34;
+  stroke-width: 1.4;
+}
+
+.champion__pupil {
+  fill: #24303c;
+}
+
+.champion__glint {
+  fill: #ffffff;
+}
+
+.champion__eye-closed {
+  fill: none;
+  stroke: #6b4a34;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+.champion__mouth {
+  fill: none;
+  stroke: #8a4a3a;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.champion__mouth--open {
+  fill: #8a3a3a;
+  stroke: #6d2c2c;
+  stroke-width: 2;
+}
+
+.champion__crown-gold {
+  fill: #f2c94c;
+  stroke: #b98d16;
+  stroke-width: 2;
+}
+
+.champion__crown-band {
+  fill: #e0b53c;
+  stroke: #b98d16;
+  stroke-width: 2;
+}
+
+.champion__gem {
+  fill: #e2574c;
+  stroke: #9c3229;
+  stroke-width: 1.2;
+}
+
+.champion__gem--side {
+  fill: #4c9be2;
+  stroke: #24608f;
+}
+
+.champion--active .champion__crown-gold,
+.champion--active .champion__crown-band {
+  filter: drop-shadow(0 0 5px rgb(242 201 76 / 85%));
+}
+
+/* ---------- Loops, one per posture ---------- */
+
+.champion__body {
+  transform-origin: 50px 116px;
+  animation: champ-breathe 3.6s ease-in-out infinite;
+}
+
+.champion--thinking .champion__body {
+  animation: champ-ponder 2.4s ease-in-out infinite;
+}
+
+.champion--pleased .champion__body {
+  animation: champ-hop 1.9s ease-in-out infinite;
+}
+
+.champion--taunt .champion__body {
+  animation: champ-taunt 1.2s ease-in-out infinite;
+}
+
+.champion--worried .champion__body {
+  animation: champ-shiver 1.4s ease-in-out infinite;
+}
+
+.champion--hiding .champion__body {
+  animation: champ-cower 2.8s ease-in-out infinite;
+}
+
+.champion--cheer .champion__body {
+  animation: champ-cheer 900ms cubic-bezier(0.3, 1.4, 0.5, 1) infinite;
+}
+
+.champion--taunt .champion__hand--pointing {
+  transform-origin: 70px 96px;
+  animation: champ-jab 600ms ease-in-out infinite;
+}
+
+.champion--hiding .champion__head {
+  animation: champ-turn-away 2.8s ease-in-out infinite;
+}
+
+.champion__eye {
+  transform-origin: 50px 50px;
+  animation: champ-blink 5.5s infinite;
+}
+
+.champion--active .champion__eye {
+  animation-duration: 3.4s;
+}
+
+.champion--reacting .champion__body {
+  animation: champ-pop 950ms cubic-bezier(0.28, 1.5, 0.45, 1);
+}
+
+@keyframes champ-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.02, 0.98);
+  }
+}
+
+@keyframes champ-ponder {
+  0%,
+  100% {
+    transform: rotate(-2deg) translateY(0);
+  }
+  50% {
+    transform: rotate(2deg) translateY(-2px);
+  }
+}
+
+@keyframes champ-hop {
+  0%,
+  55%,
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+  18% {
+    transform: translateY(-9px) scale(0.94, 1.08);
+  }
+  38% {
+    transform: translateY(0) scale(1.1, 0.9);
+  }
+}
+
+@keyframes champ-taunt {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-6px) rotate(3deg) scale(0.96, 1.06);
+  }
+  55% {
+    transform: translateY(0) rotate(-1deg) scale(1.07, 0.93);
+  }
+  80% {
+    transform: translateY(-3px) rotate(2deg) scale(0.99, 1.01);
+  }
+}
+
+@keyframes champ-jab {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(5px) translateY(-2px);
+  }
+}
+
+@keyframes champ-shiver {
+  0%,
+  100% {
+    transform: translateX(0) scale(1, 1);
+  }
+  20% {
+    transform: translateX(-3px) scale(0.98, 1.02);
+  }
+  45% {
+    transform: translateX(3px) scale(1.02, 0.98);
+  }
+  70% {
+    transform: translateX(-2px) scale(0.99, 1.01);
+  }
+}
+
+@keyframes champ-cower {
+  0%,
+  100% {
+    transform: translateY(5px) scale(1.04, 0.9);
+  }
+  50% {
+    transform: translateY(8px) scale(1.07, 0.87);
+  }
+}
+
+@keyframes champ-turn-away {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes champ-cheer {
+  0% {
+    transform: translateY(0) rotate(0deg) scale(1.07, 0.91);
+  }
+  25% {
+    transform: translateY(-14px) rotate(-8deg) scale(0.92, 1.12);
+  }
+  50% {
+    transform: translateY(0) rotate(0deg) scale(1.12, 0.89);
+  }
+  75% {
+    transform: translateY(-11px) rotate(8deg) scale(0.93, 1.1);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1.07, 0.91);
+  }
+}
+
+@keyframes champ-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes champ-pop {
+  0% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+  14% {
+    transform: scale(1.24, 0.78) rotate(0deg);
+  }
+  32% {
+    transform: translateY(-12px) scale(0.86, 1.22) rotate(-8deg);
+  }
+  52% {
+    transform: translateY(0) scale(1.16, 0.89) rotate(6deg);
+  }
+  70% {
+    transform: translateY(-5px) scale(0.96, 1.06) rotate(-3deg);
+  }
+  86% {
+    transform: translateY(0) scale(1.03, 0.98) rotate(1deg);
+  }
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .player-card,
+  .champion__body,
+  .champion__head,
+  .champion__eye,
+  .champion__hand--pointing {
+    animation: none;
+    transition: none;
+  }
+}

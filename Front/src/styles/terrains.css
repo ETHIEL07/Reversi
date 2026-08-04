@@ -1,0 +1,341 @@
+/*
+ * A terrain is a block of variables. Everything downstream — background, board, buttons,
+ * champions — already reads these, so switching terrain repaints the whole game without a
+ * single component knowing about it.
+ */
+
+:root {
+  /* Outfit colours, overridden per terrain. */
+  --robe-black: #2f3540;
+  --robe-black-line: #171b21;
+  --robe-white: #e7ece6;
+  --robe-white-line: #a9b4ab;
+}
+
+/* ---------- Winter ---------- */
+
+:root[data-terrain='winter'] {
+  --bg: #0d1725;
+  --surface: #16283c;
+  --surface-lift: #1f3a55;
+  --surface-deep: #101f30;
+  --surface-hover: #244463;
+  --line: #2c4967;
+  --line-strong: #0a1522;
+
+  --accent: #6fc6e8;
+  --accent-lift: #a3e0f5;
+  --accent-deep: #1d6285;
+  --focus: #9ad7ef;
+
+  --board-felt: #2f7f9e;
+  --board-line: #103247;
+  --stable: #b8e6f5;
+
+  --robe-black: #29405a;
+  --robe-black-line: #14222f;
+  --robe-white: #eef6fa;
+  --robe-white-line: #aec6d4;
+}
+
+/* ---------- Jungle ---------- */
+
+:root[data-terrain='jungle'] {
+  --bg: #0b1a09;
+  --surface: #16290f;
+  --surface-lift: #223d16;
+  --surface-deep: #101f0b;
+  --surface-hover: #2c4d1c;
+  --line: #34572a;
+  --line-strong: #071105;
+
+  --accent: #9ad645;
+  --accent-lift: #c2ef7c;
+  --accent-deep: #4b7a15;
+  --focus: #c8ef8a;
+
+  --board-felt: #3f8f22;
+  --board-line: #123c08;
+  --stable: #d2f39a;
+  --at-risk: #ffb020;
+
+  --robe-black: #2b3d1c;
+  --robe-black-line: #131d0c;
+  --robe-white: #eef4e2;
+  --robe-white-line: #b3c69b;
+}
+
+/* ---------- Desert ---------- */
+
+:root[data-terrain='desert'] {
+  --bg: #221408;
+  --surface: #33220f;
+  --surface-lift: #4a3316;
+  --surface-deep: #1d1207;
+  --surface-hover: #5c4020;
+  --line: #6a4a22;
+  --line-strong: #150c04;
+
+  --accent: #efb44a;
+  --accent-lift: #ffd27f;
+  --accent-deep: #9a6516;
+  --focus: #ffd79a;
+
+  --board-felt: #b4823a;
+  --board-line: #5c3c12;
+  --hint: #fff6e2;
+  --stable: #ffe0a8;
+  --at-risk: #e8613c;
+
+  --robe-black: #4a3218;
+  --robe-black-line: #24170a;
+  --robe-white: #f7ecd8;
+  --robe-white-line: #cbb28c;
+}
+
+/* ---------- Night ---------- */
+
+:root[data-terrain='night'] {
+  --bg: #07091a;
+  --surface: #121634;
+  --surface-lift: #1c2450;
+  --surface-deep: #0c0f26;
+  --surface-hover: #262f66;
+  --line: #2e3873;
+  --line-strong: #04050f;
+
+  --accent: #9b8cf5;
+  --accent-lift: #c4b9ff;
+  --accent-deep: #4a3aa8;
+  --focus: #c0b4ff;
+
+  --board-felt: #2b3f7a;
+  --board-line: #101a3d;
+  --stable: #c3baff;
+  --crown: #ffd76a;
+
+  --robe-black: #1c2148;
+  --robe-black-line: #0b0e22;
+  --robe-white: #e4e6fb;
+  --robe-white-line: #9da3cf;
+}
+
+/* ---------- Background per terrain ---------- */
+
+:root[data-terrain='winter'] .backdrop {
+  background:
+    radial-gradient(1100px 620px at 15% -10%, #1f4f74 0%, transparent 60%),
+    radial-gradient(900px 560px at 92% 8%, #2a5f80 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 110%, #14263a 0%, transparent 62%),
+    var(--bg);
+}
+
+:root[data-terrain='jungle'] .backdrop {
+  background:
+    radial-gradient(1100px 620px at 15% -10%, #2c6b1c 0%, transparent 60%),
+    radial-gradient(900px 560px at 92% 8%, #1c5230 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 110%, #143a10 0%, transparent 62%),
+    var(--bg);
+}
+
+:root[data-terrain='desert'] .backdrop {
+  background:
+    radial-gradient(1100px 620px at 15% -10%, #9a6a24 0%, transparent 60%),
+    radial-gradient(900px 560px at 92% 8%, #b8823a 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 110%, #4a2d10 0%, transparent 62%),
+    var(--bg);
+}
+
+:root[data-terrain='night'] .backdrop {
+  background:
+    radial-gradient(1100px 620px at 15% -10%, #2a2470 0%, transparent 60%),
+    radial-gradient(900px 560px at 92% 8%, #143060 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 110%, #170f3a 0%, transparent 62%),
+    var(--bg);
+}
+
+/* Snow and stars replace the drifting discs where it makes sense. */
+:root[data-terrain='winter'] .backdrop__disc,
+:root[data-terrain='night'] .backdrop__disc {
+  background: radial-gradient(circle at 50% 50%, #ffffff, rgb(255 255 255 / 0%) 70%);
+  opacity: 0.22;
+}
+
+:root[data-terrain='desert'] .backdrop__grid {
+  background-image:
+    linear-gradient(rgb(255 220 160 / 5%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 220 160 / 5%) 1px, transparent 1px);
+}
+
+/* ---------- Outfits ---------- */
+
+.champion--black .champion__robe {
+  fill: var(--robe-black);
+  stroke: var(--robe-black-line);
+}
+
+.champion--white .champion__robe {
+  fill: var(--robe-white);
+  stroke: var(--robe-white-line);
+}
+
+.champion--black .champion__arm {
+  stroke: var(--robe-black);
+}
+
+.champion--white .champion__arm {
+  stroke: var(--robe-white);
+}
+
+/* Gear is always drawn; the terrain decides which piece is on. */
+.champion__gear {
+  display: none;
+}
+
+:root[data-terrain='winter'] .champion__gear--scarf,
+:root[data-terrain='jungle'] .champion__gear--leaves,
+:root[data-terrain='desert'] .champion__gear--headscarf,
+:root[data-terrain='night'] .champion__gear--cape {
+  display: block;
+}
+
+.champion__scarf {
+  fill: #c8433f;
+  stroke: #8d2724;
+  stroke-width: 2;
+}
+
+.champion__scarf-tail {
+  fill: #b13734;
+  stroke: #8d2724;
+  stroke-width: 2;
+}
+
+.champion__leaf {
+  fill: #4f9c22;
+  stroke: #2c5f10;
+  stroke-width: 2;
+}
+
+.champion__leaf-vein {
+  fill: none;
+  stroke: #2c5f10;
+  stroke-width: 1.4;
+}
+
+.champion__cloth {
+  fill: #e8d6ac;
+  stroke: #b39a6a;
+  stroke-width: 2;
+}
+
+.champion__cloth-band {
+  fill: #b8794a;
+  stroke: #8a5730;
+  stroke-width: 1.6;
+}
+
+.champion__cape {
+  fill: #232a5e;
+  stroke: #121638;
+  stroke-width: 2;
+}
+
+.champion__cape-star {
+  fill: #ffe08a;
+}
+
+/* ---------- The picker in the options ---------- */
+
+.terrains {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.terrain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: rgb(0 0 0 / 22%);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease-out,
+    transform 90ms ease-out;
+}
+
+.terrain:hover {
+  border-color: var(--accent);
+}
+
+.terrain:active {
+  transform: translateY(2px);
+}
+
+.terrain:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.terrain--on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-deep);
+}
+
+.terrain__swatch {
+  position: relative;
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  border: 2px solid var(--line-strong);
+  overflow: hidden;
+}
+
+.terrain__disc {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: inset 0 -2px 3px rgb(0 0 0 / 40%);
+}
+
+.terrain__disc--black {
+  left: 10px;
+  bottom: 12px;
+  background: radial-gradient(circle at 32% 28%, #4a4a4a, #111 68%);
+}
+
+.terrain__disc--white {
+  right: 10px;
+  bottom: 20px;
+  background: radial-gradient(circle at 32% 28%, #ffffff, #cdd3ce 72%);
+}
+
+.terrain__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.terrain__text strong {
+  font-size: 14px;
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terrain {
+    transition: none;
+  }
+}

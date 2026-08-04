@@ -1,0 +1,225 @@
+/*
+ * Game-grade surface: heavy display type, chunky pressable buttons with a thickness,
+ * and a background that moves. Everything is CSS, no font is downloaded, which keeps the
+ * installed app working offline.
+ */
+
+.display {
+  margin: 0;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffffff 8%, var(--accent) 52%, var(--accent-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 0 rgb(0 0 0 / 55%));
+}
+
+.display--xl {
+  font-size: clamp(34px, 9vw, 62px);
+}
+
+.display--lg {
+  font-size: clamp(24px, 6vw, 34px);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---------- Pressable buttons ---------- */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: 2px solid var(--line-strong);
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--surface-lift), var(--surface));
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-sizing: border-box;
+  box-shadow: 0 3px 0 var(--line-strong);
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out,
+    filter 140ms ease-out;
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--line-strong);
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: 0 4px 0 var(--line);
+}
+
+.btn--primary {
+  border-color: var(--accent-deep);
+  background: linear-gradient(180deg, var(--accent-lift), var(--accent));
+  color: #08281a;
+  box-shadow: 0 4px 0 var(--accent-deep);
+}
+
+.btn--primary:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--accent-deep);
+}
+
+.btn--gold {
+  border-color: #a9760f;
+  background: linear-gradient(180deg, #ffd964, #e9a927);
+  color: #3a2400;
+  box-shadow: 0 4px 0 #a9760f;
+}
+
+.btn--gold:active:not(:disabled) {
+  box-shadow: 0 0 0 #a9760f;
+}
+
+.btn--menu {
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 20px;
+  font-size: 17px;
+}
+
+.btn--ghost {
+  border-color: transparent;
+  background: rgb(255 255 255 / 6%);
+  box-shadow: none;
+  font-weight: 700;
+  padding: 9px 12px;
+}
+
+.btn--ghost:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+.btn--icon-text {
+  gap: 6px;
+}
+
+.btn__note {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-transform: none;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---------- Living background ---------- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 620px at 15% -10%, #1d5a3d 0%, transparent 60%),
+    radial-gradient(900px 560px at 92% 8%, #17414f 0%, transparent 58%),
+    radial-gradient(900px 700px at 50% 110%, #123626 0%, transparent 62%),
+    var(--bg);
+}
+
+.backdrop__aurora {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(closest-side, rgb(111 211 155 / 22%), transparent 70%) 20% 30% / 55% 55% no-repeat,
+    radial-gradient(closest-side, rgb(76 155 226 / 16%), transparent 70%) 80% 60% / 50% 50% no-repeat,
+    radial-gradient(closest-side, rgb(242 201 76 / 12%), transparent 70%) 55% 15% / 45% 45% no-repeat;
+  filter: blur(6px);
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+}
+
+/* Discs drifting slowly upward, turning as they go. */
+.backdrop__disc {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.13;
+  background: linear-gradient(135deg, #ffffff 0 50%, #101010 50% 100%);
+  animation: disc-float linear infinite;
+}
+
+.backdrop__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(120% 100% at 50% 0%, #000 20%, transparent 78%);
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 3%, 0) scale(1.02);
+  }
+}
+
+@keyframes disc-float {
+  0% {
+    transform: translateY(12vh) rotate(0deg) scale(0.9);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.14;
+  }
+  88% {
+    opacity: 0.14;
+  }
+  100% {
+    transform: translateY(-118vh) rotate(540deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop__aurora,
+  .backdrop__disc {
+    animation: none;
+  }
+}

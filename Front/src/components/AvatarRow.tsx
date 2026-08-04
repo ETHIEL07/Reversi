@@ -1,5 +1,6 @@
-import { Mascot, type Pose } from './Mascot'
-import { LEVELS } from '../constants/levels'
+import { Champion, type Pose } from './Champion'
+import { useT } from '../i18n/useT'
+import type { Dictionary } from '../i18n/dictionary'
 import type { GameState, Player } from '../types/game'
 
 type AvatarRowProps = {
@@ -38,48 +39,47 @@ function poseOf(game: GameState, side: Player): Pose {
   return game.currentPlayer === side ? 'thinking' : 'idle'
 }
 
-/** A short line in the character's own voice. Kept impersonal in tone, never chatty. */
-function lineOf(game: GameState, pose: Pose): string {
+/** A short line under each character. Impersonal tone, never chatty. */
+function lineOf(game: GameState, pose: Pose, t: Dictionary): string {
   if (game.isOver) {
     if (pose === 'cheer') {
-      return 'Victoire'
+      return t.champions.win
     }
-    return pose === 'hiding' ? 'Défaite' : 'Égalité'
+    return pose === 'hiding' ? t.champions.loss : t.champions.tie
   }
 
   switch (pose) {
     case 'taunt':
-      return 'Large avance'
+      return t.champions.ahead
     case 'pleased':
-      return 'Prend le dessus'
+      return t.champions.leading
     case 'worried':
-      return 'En difficulté'
+      return t.champions.behind
     case 'hiding':
-      return 'Ne regarde plus'
+      return t.champions.hiding
     case 'thinking':
-      return 'À vous de jouer'
+      return t.champions.toPlay
     default:
-      return 'En attente'
+      return t.champions.waiting
   }
 }
 
-function nameOf(game: GameState, side: Player): string {
-  const colour = side === 'Black' ? 'Noirs' : 'Blancs'
+function nameOf(game: GameState, side: Player, t: Dictionary): string {
+  const colour = side === 'Black' ? t.newGame.black : t.newGame.white
 
   if (game.opponent === 'Human') {
     return colour
   }
 
   if (side === game.humanColor) {
-    return `Vous · ${colour}`
+    return `${t.champions.you} · ${colour}`
   }
 
-  const level = LEVELS.find((entry) => entry.level === game.level)
-
-  return `${level?.label ?? 'Ordinateur'} · ${colour}`
+  return `${game.level === null ? t.champions.computer : t.levels[game.level].label} · ${colour}`
 }
 
 function Side({ game, side }: { game: GameState; side: Player }) {
+  const t = useT()
   const pose = poseOf(game, side)
   const active = !game.isOver && game.currentPlayer === side
   const slug = side === 'Black' ? 'black' : 'white'
@@ -91,25 +91,25 @@ function Side({ game, side }: { game: GameState; side: Player }) {
       data-pose={pose}
       data-active={active ? 'true' : 'false'}
     >
-      <Mascot
+      <Champion
         pose={pose}
-        colour={side}
+        side={side}
         facing={side === 'Black' ? 'right' : 'left'}
         active={active}
-        testId={`game-view-mascot-${slug}`}
+        testId={`game-view-champion-${slug}`}
       />
 
       <span className="player-card__name" data-testid={`game-view-player-${slug}-name`}>
-        {nameOf(game, side)}
+        {nameOf(game, side, t)}
       </span>
       <span className="player-card__line" data-testid={`game-view-player-${slug}-line`}>
-        {lineOf(game, pose)}
+        {lineOf(game, pose, t)}
       </span>
     </div>
   )
 }
 
-/** The two characters framing the score, one per side. */
+/** The two champions framing the score, one per side. */
 export function AvatarRow({ game }: AvatarRowProps) {
   return (
     <div className="avatar-row" data-testid="game-view-avatars">
