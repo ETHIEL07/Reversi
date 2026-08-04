@@ -5,21 +5,62 @@
   min-width: 0;
 }
 
-/* Two players on one phone: a vertical swipe turns the whole board round for the player
-   sitting opposite. The rotation lives on the board itself so every mark turns with it. */
+/* Two players on one device: each press of the corner arrow turns the whole board a quarter
+   counter-clockwise. The rotation lives on the board itself so every mark turns with it. */
 .board-frame .board {
   transition: transform 560ms cubic-bezier(0.4, 0.05, 0.3, 1);
+  transform: rotate(calc(var(--board-turns, 0) * -90deg));
 }
 
-.board-frame--flipped .board {
-  transform: rotate(180deg);
+/* Matches the board width so the arrow stays glued to its bottom-right corner. */
+.board-shell {
+  position: relative;
+  width: min(100%, var(--board-max));
 }
 
-.board-flip-note {
-  margin: 0;
-  font-size: 11px;
-  text-align: center;
-  color: var(--text-muted);
+.board-rotate {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgb(52 88 68 / 96%), rgb(18 38 28 / 96%));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 18%),
+    0 4px 12px rgb(0 0 0 / 45%);
+  cursor: pointer;
+  transition: transform 90ms ease-out, filter 140ms ease-out;
+}
+
+.board-rotate:hover {
+  filter: brightness(1.15);
+}
+
+.board-rotate:active {
+  transform: scale(0.9);
+}
+
+.board-rotate:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.board-rotate__arrow {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--accent-lift);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 560ms cubic-bezier(0.4, 0.05, 0.3, 1);
 }
 
 /* Square in every situation. The ceiling comes from the layout class, never from vh/vw,
@@ -379,7 +420,8 @@
   }
 
 
-  .board-frame .board {
+  .board-frame .board,
+  .board-rotate__arrow {
     transition: none;
   }
 }

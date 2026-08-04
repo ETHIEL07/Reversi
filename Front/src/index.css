@@ -31,15 +31,32 @@
   box-sizing: border-box;
 }
 
+/*
+ * The page never scrolls: the body is pinned like a native app, and only the screen
+ * content scrolls inside .layout when it has to. No rubber-band, no pull-to-refresh.
+ */
 html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }
 
+body {
+  position: fixed;
+  inset: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 #root {
-  min-height: 100dvh;
+  height: 100%;
 }

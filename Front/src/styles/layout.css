@@ -9,7 +9,11 @@
   justify-content: center;
   width: 100%;
   min-width: 0;
-  overflow: auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 
   /* Ceiling for the board and everything aligned on it. */
   --board-max: 560px;

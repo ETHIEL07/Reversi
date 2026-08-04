@@ -259,9 +259,9 @@
   align-items: center;
   gap: 10px;
   padding: 8px;
-  border: 2px solid var(--line);
+  border: 2px solid transparent;
   border-radius: 14px;
-  background: rgb(0 0 0 / 22%);
+  background: rgb(0 0 0 / 26%);
   color: var(--text);
   font: inherit;
   text-align: left;

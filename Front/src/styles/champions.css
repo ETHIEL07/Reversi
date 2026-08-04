@@ -14,7 +14,7 @@
   align-items: center;
   gap: 1px;
   padding: 2px 4px 4px;
-  border: 2px solid var(--line);
+  border: 2px solid transparent;
   border-radius: 14px;
   background: linear-gradient(180deg, var(--surface), var(--surface-deep));
   box-shadow: 0 2px 0 var(--line-strong);

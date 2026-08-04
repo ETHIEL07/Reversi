@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getHistory } from '../api/games'
 import { useT } from '../i18n/useT'
 import type { GameState, MoveHistoryEntry } from '../types/game'
@@ -17,6 +17,12 @@ const SLOTS = 64
 export function Timeline({ game, onPick }: TimelineProps) {
   const t = useT()
   const [history, setHistory] = useState<MoveHistoryEntry[]>([])
+  const root = useRef<HTMLDivElement>(null)
+
+  // The rail opens below the tools, often past the fold: bring it into view by itself.
+  useEffect(() => {
+    root.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -33,7 +39,7 @@ export function Timeline({ game, onPick }: TimelineProps) {
   }, [game.id, game.moveCount])
 
   return (
-    <div className="timeline" data-testid="game-view-timeline">
+    <div className="timeline" ref={root} data-testid="game-view-timeline">
       <div className="timeline__head">
         <p className="eyebrow">{t.game.timelinePanel.title}</p>
         <p className="timeline__count" data-testid="game-text-timeline-count">

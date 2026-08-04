@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { AvatarRow } from '../components/AvatarRow'
 import { BackButton } from '../components/BackButton'
 import { Board } from '../components/Board'
@@ -45,9 +45,9 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
   const [panel, setPanel] = useState<OpenPanel>('none')
   const [saved, setSaved] = useState(() => isSaved(game.id))
   const [showHints, setShowHints] = useState(true)
-  // Two players sharing a phone: a vertical swipe turns the board round for the one opposite.
-  const [flipped, setFlipped] = useState(false)
-  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  // Two players sharing a device: each press turns the board a quarter counter-clockwise,
+  // so four presses bring it home. The counter only grows, keeping every turn animated.
+  const [turns, setTurns] = useState(0)
   const announced = useRef(false)
 
   // A move spans several seconds of animation; leaving mid-sequence must not update state.
@@ -177,47 +177,47 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
         </div>
 
         <div
-          className={flipped ? 'game-layout__board board-frame board-frame--flipped' : 'game-layout__board board-frame'}
+          className="game-layout__board board-frame"
           data-testid="game-view-board-frame"
-          data-flipped={flipped ? 'true' : 'false'}
-          onTouchStart={(event) => {
-            touchStart.current = { x: event.touches[0].clientX, y: event.touches[0].clientY }
-          }}
-          onTouchEnd={(event) => {
-            const start = touchStart.current
-            touchStart.current = null
-
-            if (start === null) {
-              return
-            }
-
-            const dx = event.changedTouches[0].clientX - start.x
-            const dy = event.changedTouches[0].clientY - start.y
-
-            // A clearly vertical swipe, long enough not to be a hesitant tap.
-            if (Math.abs(dy) > 70 && Math.abs(dy) > Math.abs(dx) * 1.5) {
-              playTick()
-              setFlipped((current) => !current)
-            }
-          }}
+          data-turns={turns % 4}
+          style={{ '--board-turns': turns } as CSSProperties}
         >
-          <Board
-            board={game.board}
-            legalMoves={game.legalMoves}
-            analysis={game.analysis}
-            lastMove={game.lastMove}
-            slow={game.opponent === 'Computer' && game.lastMove !== null && game.lastMove.player !== game.humanColor}
-            showHints={showHints}
-            disabled={busy || game.isOver}
-            onPlay={(row, col) => void play(row, col)}
-          />
-        </div>
+          <div className="board-shell">
+            <Board
+              board={game.board}
+              legalMoves={game.legalMoves}
+              analysis={game.analysis}
+              lastMove={game.lastMove}
+              slow={game.opponent === 'Computer' && game.lastMove !== null && game.lastMove.player !== game.humanColor}
+              showHints={showHints}
+              disabled={busy || game.isOver}
+              onPlay={(row, col) => void play(row, col)}
+            />
 
-        {flipped ? (
-          <p className="board-flip-note" data-testid="game-text-flipped">
-            {t.game.flipBoard}
-          </p>
-        ) : null}
+            <button
+              type="button"
+              className="board-rotate"
+              title={t.game.flipBoard}
+              aria-label={t.game.flipBoard}
+              data-testid="game-btn-tourner"
+              onClick={() => {
+                playTick()
+                setTurns((current) => current + 1)
+              }}
+            >
+              {/* The arrow tracks where the original top of the board now points. */}
+              <svg
+                className="board-rotate__arrow"
+                style={{ transform: `rotate(${turns * -90}deg)` }}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M12 20 L12 6 M6 11 L12 5 L18 11" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
         <div className="game-layout__actions">
           {error !== null ? (
