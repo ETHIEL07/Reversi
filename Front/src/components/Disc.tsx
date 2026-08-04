@@ -28,13 +28,6 @@ export function Disc({ colour, analysis, delayMs, justPlayed, doomed, testId }: 
     classes.push('disc-slot--doomed')
   }
 
-  if (analysis?.isStable === true) {
-    classes.push('disc-slot--stable')
-  }
-
-  if (analysis?.isAtRisk === true) {
-    classes.push('disc-slot--at-risk')
-  }
 
   if (justPlayed) {
     classes.push('disc-slot--landed')
@@ -48,8 +41,6 @@ export function Disc({ colour, analysis, delayMs, justPlayed, doomed, testId }: 
       style={style}
       data-testid={testId}
       data-colour={colour}
-      data-stable={analysis?.isStable === true ? 'true' : 'false'}
-      data-at-risk={analysis?.isAtRisk === true ? 'true' : 'false'}
       data-doomed={doomed ? 'true' : 'false'}
     >
       {doomed ? <span className="disc__doom" aria-hidden="true" /> : null}

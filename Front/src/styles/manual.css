@@ -164,22 +164,6 @@
   clip-path: polygon(0 100%, 0 22%, 29% 60%, 50% 0, 71% 60%, 100% 22%, 100% 100%);
 }
 
-.legend__ring::before {
-  content: '';
-  position: absolute;
-  inset: -12%;
-  border-radius: 50%;
-}
-
-.legend__ring--stable::before {
-  border: 2px solid var(--stable);
-  opacity: 0.85;
-}
-
-.legend__ring--at-risk::before {
-  border: 2px dashed var(--at-risk);
-  opacity: 0.9;
-}
 
 .legend__text {
   display: flex;

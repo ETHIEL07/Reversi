@@ -57,7 +57,8 @@
       "Bash(dotnet build *)",
       "Bash(npm run *)",
       "Bash(pkill -f 'Reversi.Api')",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

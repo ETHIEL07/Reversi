@@ -326,28 +326,6 @@
   background: linear-gradient(180deg, #f2f6f1 0%, #cbd2cb 55%, #a7afa8 100%);
 }
 
-/* A stable disc can never be flipped again: it wears a quiet ring. */
-.disc-slot--stable::after {
-  content: '';
-  position: absolute;
-  inset: -6%;
-  border-radius: 50%;
-  border: 2px solid var(--stable);
-  opacity: 0.75;
-  pointer-events: none;
-}
-
-/* A threatened disc is the one the side to move can flip right now. */
-.disc-slot--at-risk::before {
-  content: '';
-  position: absolute;
-  inset: -10%;
-  border-radius: 50%;
-  border: 2px dashed var(--at-risk);
-  opacity: 0.8;
-  pointer-events: none;
-  animation: at-risk-pulse 1.6s ease-in-out infinite;
-}
 
 .disc__crown {
   position: absolute;
@@ -376,15 +354,6 @@
   }
 }
 
-@keyframes at-risk-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .disc,

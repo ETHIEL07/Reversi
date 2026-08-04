@@ -33,29 +33,6 @@ export function BoardLegend({ scope }: { scope: string }) {
         </span>
       </li>
 
-      <li className="legend__item" data-testid={`${scope}-view-legend-stable`}>
-        <span className="legend__sample">
-          <span className="legend__cell">
-            <span className="legend__disc legend__disc--white legend__ring legend__ring--stable" />
-          </span>
-        </span>
-        <span className="legend__text">
-          <strong>{t.legend.stable}</strong>
-          <span>{t.legend.stableNote}</span>
-        </span>
-      </li>
-
-      <li className="legend__item" data-testid={`${scope}-view-legend-at-risk`}>
-        <span className="legend__sample">
-          <span className="legend__cell">
-            <span className="legend__disc legend__disc--black legend__ring legend__ring--at-risk" />
-          </span>
-        </span>
-        <span className="legend__text">
-          <strong>{t.legend.atRisk}</strong>
-          <span>{t.legend.atRiskNote}</span>
-        </span>
-      </li>
     </ul>
   )
 }
