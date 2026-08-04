@@ -327,6 +327,17 @@
 }
 
 
+/* Corners are protected: green ring shows the square can never be lost. */
+.disc-slot--corner-protected::after {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  border: 2px solid var(--stable);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
 .disc__crown {
   position: absolute;
   top: -18%;
@@ -367,9 +378,6 @@
     animation: none;
   }
 
-  .disc-slot--at-risk::before {
-    animation: none;
-  }
 
   .board-frame .board {
     transition: none;

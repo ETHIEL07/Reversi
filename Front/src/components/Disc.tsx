@@ -28,6 +28,10 @@ export function Disc({ colour, analysis, delayMs, justPlayed, doomed, testId }: 
     classes.push('disc-slot--doomed')
   }
 
+  // Only the four corners get the green protection ring.
+  if (analysis?.isCorner === true) {
+    classes.push('disc-slot--corner-protected')
+  }
 
   if (justPlayed) {
     classes.push('disc-slot--landed')
