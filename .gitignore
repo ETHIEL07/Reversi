@@ -23,3 +23,8 @@ Thumbs.db
 # Secrets
 .env
 .env.local
+
+# SQLite database created at runtime
+reversi.db
+reversi.db-shm
+reversi.db-wal
