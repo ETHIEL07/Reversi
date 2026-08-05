@@ -1,9 +1,11 @@
+const apiBase = import.meta.env.VITE_API_URL || ''
+
 /**
  * Thin fetch wrapper. The server is the authority, so an error body is never swallowed:
  * its message is what the UI shows.
  */
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, {
+  const response = await fetch(`${apiBase}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
