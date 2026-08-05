@@ -1,11 +1,12 @@
-const apiBase = import.meta.env.VITE_API_URL || ''
-
 /**
  * Thin fetch wrapper. The server is the authority, so an error body is never swallowed:
  * its message is what the UI shows.
+ *
+ * Paths stay relative: the dev server proxies /api to the engine, and in production the
+ * host rewrites it the same way. The browser is always same-origin, so CORS never applies.
  */
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${apiBase}${path}`, {
+  const response = await fetch(path, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
