@@ -165,6 +165,73 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
     void run(() => loadDemoPosition(game.id, position))
   }
 
+  function rotateCoord(row: number, col: number, times: number): [number, number] {
+    let r = row
+    let c = col
+    for (let i = 0; i < times; i++) {
+      const temp = r
+      r = c
+      c = 7 - temp
+    }
+    return [r, c]
+  }
+
+  function rotateBoardArray(board: string[], times: number): string[] {
+    if (times === 0) return board
+
+    let current = board.map((row) => Array.from(row))
+    for (let rotation = 0; rotation < times; rotation++) {
+      const rotated: string[][] = Array(8)
+        .fill(null)
+        .map(() => Array(8).fill(''))
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const [nr, nc] = rotateCoord(r, c, 1)
+          rotated[nr][nc] = current[r][c]
+        }
+      }
+      current = rotated
+    }
+    return current.map((row) => row.join(''))
+  }
+
+  function rotateLegalMoves(
+    moves: typeof game.legalMoves,
+    times: number,
+  ): typeof game.legalMoves {
+    if (times === 0) return moves
+    return moves.map((move) => {
+      const [r, c] = rotateCoord(move.row, move.col, times)
+      return { ...move, row: r, col: c }
+    })
+  }
+
+  function rotateAnalysis(
+    analysis: typeof game.analysis,
+    times: number,
+  ): typeof game.analysis {
+    if (times === 0) return analysis
+    return analysis.map((cell) => {
+      const [r, c] = rotateCoord(cell.row, cell.col, times)
+      return { ...cell, row: r, col: c }
+    })
+  }
+
+  function rotateLastMove(
+    move: typeof game.lastMove,
+    times: number,
+  ): typeof game.lastMove {
+    if (move === null || times === 0) return move
+    const [r, c] = rotateCoord(move.row, move.col, times)
+    return { ...move, row: r, col: c }
+  }
+
+  const rotations = turns % 4
+  const displayBoard = rotateBoardArray(game.board, rotations)
+  const displayLegalMoves = rotateLegalMoves(game.legalMoves, rotations)
+  const displayAnalysis = rotateAnalysis(game.analysis, rotations)
+  const displayLastMove = rotateLastMove(game.lastMove, rotations)
+
   return (
     <section className="screen" data-testid="game-view-container">
       <div className="screen__bar">
@@ -185,14 +252,25 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
         >
           <div className="board-shell">
             <Board
-              board={game.board}
-              legalMoves={game.legalMoves}
-              analysis={game.analysis}
-              lastMove={game.lastMove}
+              board={displayBoard}
+              legalMoves={displayLegalMoves}
+              analysis={displayAnalysis}
+              lastMove={displayLastMove}
               slow={game.opponent === 'Computer' && game.lastMove !== null && game.lastMove.player !== game.humanColor}
               showHints={showHints}
               disabled={busy || game.isOver}
-              onPlay={(row, col) => void play(row, col)}
+              onPlay={(row, col) => {
+                // Rotate the clicked position back to logical coordinates.
+                let r = row
+                let c = col
+                const rotations = turns % 4
+                for (let i = 0; i < rotations; i++) {
+                  const temp = r
+                  r = c
+                  c = 7 - temp
+                }
+                void play(r, c)
+              }}
             />
 
             <button
