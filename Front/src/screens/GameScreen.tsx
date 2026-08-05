@@ -170,8 +170,8 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
     let c = col
     for (let i = 0; i < times; i++) {
       const temp = r
-      r = c
-      c = 7 - temp
+      r = 7 - c
+      c = temp
     }
     return [r, c]
   }
@@ -260,7 +260,7 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
               showHints={showHints}
               disabled={busy || game.isOver}
               onPlay={(row, col) => {
-                // Rotate the clicked position back to logical coordinates.
+                // Unrotate the clicked position back to logical coordinates.
                 let r = row
                 let c = col
                 const rotations = turns % 4
