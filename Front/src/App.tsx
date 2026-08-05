@@ -25,6 +25,7 @@ import './styles/controls.css'
 import './styles/champions.css'
 import './styles/tools.css'
 import './styles/manual.css'
+import './styles/endgame.css'
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('home')

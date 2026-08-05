@@ -94,10 +94,15 @@ const fr = {
       endgameNote: 'Quelques cases libres et un score qui se joue à peu de pions.',
     },
     timelinePanel: {
-      title: 'Fil de partie',
+      title: "Fil de partie",
       moves: (count: number) => `${count} / 64`,
-      hint: 'Appuyer sur un repère remonte la partie jusqu’à ce coup.',
-      start: 'Position de départ',
+      hint: "Appuyer sur un repere remonte la partie jusqu’a ce coup.",
+      start: "Position de depart",
+    },
+    results: {
+      youWin: "Victoire !",
+      youLose: "Defaite",
+      draw: "Partie nulle",
     },
   },
   howToPlay: {
@@ -309,6 +314,11 @@ const en: typeof fr = {
       moves: (count: number) => `${count} / 64`,
       hint: 'Tap a marker to take the game back to that move.',
       start: 'Opening position',
+    },
+    results: {
+      youWin: 'Victory!',
+      youLose: 'Defeat',
+      draw: 'A draw',
     },
   },
   howToPlay: {

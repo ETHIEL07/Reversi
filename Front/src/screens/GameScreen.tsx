@@ -3,6 +3,7 @@ import { AvatarRow } from '../components/AvatarRow'
 import { BackButton } from '../components/BackButton'
 import { Board } from '../components/Board'
 import { BoardLegend } from '../components/BoardLegend'
+import { EndgameOverlay } from '../components/EndgameOverlay'
 import { Modal } from '../components/Modal'
 import { ScoreBar } from '../components/ScoreBar'
 import { Timeline } from '../components/Timeline'
@@ -389,6 +390,8 @@ export function GameScreen({ game, onChange, onBack }: GameScreenProps) {
           </div>
         </Modal>
       ) : null}
+
+      {game.isOver ? <EndgameOverlay game={game} onBack={leave} /> : null}
     </section>
   )
 }
