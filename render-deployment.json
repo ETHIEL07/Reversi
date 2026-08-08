@@ -1,0 +1,40 @@
+{
+  "name": "Reversi",
+  "description": "Reversi (Othello) game with React frontend and .NET backend",
+  "repository": "https://github.com/ETHIEL07/Reversi",
+  "keywords": ["reversi", "othello", "game", "dotnet", "react"],
+
+  "services": [
+    {
+      "type": "web",
+      "name": "reversi-api",
+      "env": "docker",
+      "plan": "free",
+      "branch": "main",
+      "healthCheckPath": "/api/version",
+      "dockerfilePath": "./Dockerfile",
+      "envVars": [
+        {
+          "key": "ASPNETCORE_ENVIRONMENT",
+          "value": "Production"
+        },
+        {
+          "key": "ConnectionStrings__Reversi",
+          "fromDatabase": {
+            "name": "reversi-db",
+            "property": "connectionString"
+          }
+        }
+      ]
+    }
+  ],
+
+  "databases": [
+    {
+      "name": "reversi-db",
+      "databaseName": "reversi_prod",
+      "user": "jmp",
+      "plan": "free"
+    }
+  ]
+}
