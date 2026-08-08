@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: reversi-api
+    env: docker
+    plan: free
+    branch: main
+    healthCheckPath: /api/version
+
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__Reversi
+        fromDatabase:
+          name: reversi-db
+          property: connectionString
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reversi-db
+          property: connectionString
+
+    dockerfilePath: ./Dockerfile
+
+databases:
+  - name: reversi-db
+    databaseName: reversi_prod
+    user: jmp
+    plan: free
