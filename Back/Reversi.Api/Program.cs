@@ -24,10 +24,11 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-// Railway provides DATABASE_URL env var; fall back to appsettings, then SQLite
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-    ?? builder.Configuration.GetConnectionString("Reversi")
-    ?? "Data Source=reversi.db";
+// Use SQLite in production (simple, fast, single-user game is fine).
+// Fall back to appsettings config for local dev with PostgreSQL.
+var connectionString = builder.Environment.IsProduction()
+    ? "Data Source=reversi.db"
+    : (builder.Configuration.GetConnectionString("Reversi") ?? "Data Source=reversi.db");
 
 builder.Services.AddDbContext<ReversiDbContext>(options =>
 {
