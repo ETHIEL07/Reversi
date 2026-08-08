@@ -24,7 +24,9 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
-var connectionString = builder.Configuration.GetConnectionString("Reversi")
+// Railway provides DATABASE_URL env var; fall back to appsettings, then SQLite
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("Reversi")
     ?? "Data Source=reversi.db";
 
 builder.Services.AddDbContext<ReversiDbContext>(options =>
@@ -43,8 +45,11 @@ builder.Services.AddScoped<GameService>();
 const string FrontCorsPolicy = "front";
 
 // Origins from config, with dev defaults as fallback.
+// In production (Railway/Vercel), allow the Vercel domain.
 var frontOrigins = builder.Configuration.GetSection("FrontOrigins").Get<string[]>()
-    ?? ["http://localhost:5213", "http://127.0.0.1:5213"];
+    ?? (builder.Environment.IsProduction()
+        ? ["https://reversi-psi-two.vercel.app", "http://localhost:3000"]
+        : ["http://localhost:5213", "http://127.0.0.1:5213"]);
 
 builder.Services.AddCors(options =>
 {
